@@ -4,13 +4,15 @@
       "dev": {
         "developmentClient": true,
         "android": { "buildType": "apk" },
-        "ios": { "simulator": true }
+        "ios": { "simulator": true },
+        "credentialsSource": "remote"
       },
       "stage": {
         "developmentClient": true,
         "distribution": "internal",
         "android": { "buildType": "apk" },
-        "ios": { "simulator": true }
+        "ios": { "simulator": true },
+        "credentialsSource": "remote"
       }
     }
 }  
