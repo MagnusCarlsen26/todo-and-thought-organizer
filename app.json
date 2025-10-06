@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Speak2Note",
-    "slug": "Speak2Note",
+    "slug": "speak2note",
     "version": "0.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -13,7 +13,8 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.khushalsindhav.speak2note"
     },
     "android": {
       "adaptiveIcon": {
@@ -21,7 +22,8 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.khushalsindhav.speak2note"
     },
     "web": {
       "favicon": "./assets/favicon.png"
