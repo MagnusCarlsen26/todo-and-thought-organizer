@@ -1,0 +1,16 @@
+{
+    "cli": { "version": ">= 13.0.0" },
+    "build": {
+      "dev": {
+        "developmentClient": true,
+        "android": { "buildType": "apk" },
+        "ios": { "simulator": true }
+      },
+      "stage": {
+        "developmentClient": true,
+        "distribution": "internal",
+        "android": { "buildType": "apk" },
+        "ios": { "simulator": true }
+      }
+    }
+}  
