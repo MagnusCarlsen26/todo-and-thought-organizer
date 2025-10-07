@@ -1,12 +1,42 @@
-import { StatusBar } from 'expo-status-bar';
-import { Text, View } from 'react-native';
+import 'react-native-gesture-handler';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import ViewTodos from './src/tabs/ViewTodos';
+import AddScreen from './src/tabs/AddScreen';
+import ViewNotes from './src/tabs/ViewNotes';
+
+import { AddIcon, TodosIcon, NotesIcon } from './src/assets/svgs/navSvgs';
+
+const Tab = createBottomTabNavigator();
 
 export default function App() {
   return (
-    <View className="flex-1 items-center justify-center bg-white">
-      <Text className="text-2xl font-bold text-blue-700">NativeWind + Expo + Tailwind</Text>
-      <Text className="mt-2 text-base text-gray-700">Edit App.tsx to get started.</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Tab.Navigator screenOptions={{ headerShown: false }}>
+
+        <Tab.Screen
+          name="Todos"
+          component={ViewTodos}
+          options={{
+            tabBarIcon: ({ color, size }) => <TodosIcon color={color} size={size} />
+          }} 
+        />
+        <Tab.Screen
+          name="Add"
+          component={AddScreen}
+          options={{
+            tabBarIcon: ({ color, size }) => <AddIcon color={color} size={size} />
+          }} 
+        />
+        <Tab.Screen
+          name="Notes"
+          component={ViewNotes}
+          options={{
+            tabBarIcon: ({ color, size }) => <NotesIcon color={color} size={size} />
+          }} 
+        />
+        
+      </Tab.Navigator>
+    </NavigationContainer>
   );
 }
