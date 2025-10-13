@@ -1,19 +1,36 @@
 import 'react-native-gesture-handler';
-import { NavigationContainer } from '@react-navigation/native';
+import { DarkTheme, NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { View } from 'react-native';
 import ViewTodos from './src/tabs/ViewTodos';
 import AddScreen from './src/tabs/AddScreen';
 import ViewNotes from './src/tabs/ViewNotes';
 
 import { AddIcon, TodosIcon, NotesIcon } from './src/assets/svgs/navSvgs';
+import { StatusBar } from 'expo-status-bar';
 
 const Tab = createBottomTabNavigator();
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Tab.Navigator screenOptions={{ headerShown: false }}>
-
+    <View className="flex-1 bg-slate-950">
+      <NavigationContainer theme={DarkTheme}>
+        <StatusBar style="light" backgroundColor="#0b0f16" />
+        <Tab.Navigator 
+          screenOptions={{ 
+            headerShown: false,
+            tabBarActiveTintColor: '#93c5fd',
+            tabBarInactiveTintColor: '#6b7280',
+            tabBarStyle: {
+              backgroundColor: '#0b0f16',
+              borderTopColor: '#111827'
+            },
+            tabBarLabelStyle: {
+              fontSize: 12
+            }
+          }}
+          initialRouteName="Add"
+        >
         <Tab.Screen
           name="Todos"
           component={ViewTodos}
@@ -36,7 +53,8 @@ export default function App() {
           }} 
         />
         
-      </Tab.Navigator>
-    </NavigationContainer>
+        </Tab.Navigator>
+      </NavigationContainer>
+    </View>
   );
 }
