@@ -1,0 +1,30 @@
+[
+    {
+        "category" : "Shopping",
+        "categorySvg" : "// Path to shopping svg",
+        "color" : "// Color of the category",
+        "subcategories" : [
+            "Online Shopping",
+            "Offline Shopping",
+            "Any Online/Offline Shopping"
+        ]
+    },
+    {
+        "category" : "Things to make decision",
+        "categorySvg" : "// Path to things to make decision svg",
+        "color" : "// Color of the category",
+        "subcategories" : [
+            "Career",
+            "Non-career non-personal",
+            "Genreal Decisions"
+        ]
+    },
+    {
+        "category" : "Chores",
+        "categorySvg" : "// Path to chores svg",
+        "color" : "// Color of the category",
+        "subcategories" : [
+            "Household Chores"
+        ]
+    }
+]

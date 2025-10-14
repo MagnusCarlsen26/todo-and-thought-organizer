@@ -7,21 +7,19 @@ import { stateConfig } from '../constants/addScreen/stateConfig';
 import StateTransitionButtons from '../components/addScreen/stateTransitionButtons';
 import { uploadAudio } from '../utils/uploadAudio';
 import { useAudioRecorder } from '../hooks/useAudioRecorder';
-import { getServerBaseUrl } from '../utils/env';
 
 export type ScreenStates = "idle"
     | "recording"
     | "paused"
     | "processing"
 
-export default function ViewTodos() {
+export default function AddScreen() {
     
     const [currState, setCurrState] = useState<ScreenStates>("idle");
     const [colorIndex, setColorIndex] = useState(0);
     const scaleAnim = useRef(new Animated.Value(1)).current;
     const firstRender = useRef(true);
     const { start, pause, resume, cancel, stopAndGetBase64, elapsedSeconds } = useAudioRecorder();
-    const serverBaseUrl = getServerBaseUrl();
 
     const formatTime = (totalSeconds: number) => {
         const minutes = Math.floor(totalSeconds / 60);
@@ -81,9 +79,12 @@ export default function ViewTodos() {
             if ((currState === 'recording' || currState === 'paused') && newState === 'processing') {
                 setCurrState('processing');
                 try {
-                    const { base64, filename, mimeType } = await stopAndGetBase64();
-                    await uploadAudio({ serverBaseUrl, filename, mimeType, base64 });
-                } catch {}
+                    const { base64, mimeType } = await stopAndGetBase64();
+                    const result = await uploadAudio({ mimeType, base64 });
+                    console.log('Upload result:', result);
+                } catch (error) {
+                    console.error('Upload failed:', error);
+                }
                 setCurrState('idle');
                 return;
             }

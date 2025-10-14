@@ -14,7 +14,7 @@ app.get('/', (req, res) => {
 });
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  app.listen(port, () => console.log(`Server running on port ${port}`));
+  app.listen(port,"0.0.0.0",() => console.log(`Server running on port ${port}`));
 }
 
 export default app;
