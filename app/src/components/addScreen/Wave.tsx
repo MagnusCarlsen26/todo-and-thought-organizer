@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { View } from 'react-native';
 import Animated, {
     useSharedValue,
@@ -7,22 +7,51 @@ import Animated, {
     withTiming,
     Easing,
     interpolate,
+    cancelAnimation,
 } from 'react-native-reanimated';
 import { COLOR_TRANSITION } from '../../assets/themes/addScreenThemes';
 
-const WaveBar = ({ delay_, color_ }: { delay_: number, color_: string }) => {
+type AnimationState = "none" | "running" | "still";
+
+function WaveBar({ 
+    delay_, 
+    color_, 
+    animationState 
+}: { 
+    delay_: number, 
+    color_: string, 
+    animationState: AnimationState 
+}) {
     const progress = useSharedValue(0);
 
+    const animationLoop = useCallback(() => {
+        progress.value = withTiming(
+            progress.value === 0 ? 1 : 0,
+            { duration: 1000, easing: Easing.linear },
+            (isFinished) => {
+                if (isFinished) {
+                    animationLoop();
+                }
+            }
+        );
+    }, [progress]);
+
     useEffect(() => {
-        const timeout = setTimeout(() => {
-            progress.value = withRepeat(
-                withTiming(1, { duration: 1000, easing: Easing.linear }),
-                -1,
-                true
-            );
-        }, delay_);
-        return () => clearTimeout(timeout);
-    }, []);
+        if (animationState === 'running') {
+            const timeout = setTimeout(() => {
+                animationLoop();
+            }, delay_);
+            return () => clearTimeout(timeout);
+        } else {
+            cancelAnimation(progress);
+            if (animationState === 'none') {
+                progress.value = withTiming(0);
+            }
+        }
+        return () => {
+            cancelAnimation(progress);
+        }
+    }, [animationState, delay_, progress, animationLoop]);
 
     const animatedStyle = useAnimatedStyle(() => {
         const height = interpolate(
@@ -43,7 +72,7 @@ const WaveBar = ({ delay_, color_ }: { delay_: number, color_: string }) => {
     );
 };
 
-export default function Wave() {
+export default function Wave({ animationState }: { animationState: AnimationState }) {
 
     return (
         <View className="rounded-full flex-row items-center justify-center">
@@ -52,6 +81,7 @@ export default function Wave() {
                     key={i} 
                     delay_={i * 100}
                     color_={COLOR_TRANSITION[i]}
+                    animationState={animationState}
                 />
             ))}
         </View>
