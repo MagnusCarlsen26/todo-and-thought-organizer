@@ -5,6 +5,9 @@ import Wave from '../components/addScreen/Wave';
 import { COLOR_TRANSITION } from '../assets/themes/addScreenThemes';
 import { stateConfig } from '../constants/addScreen/stateConfig';
 import StateTransitionButtons from '../components/addScreen/stateTransitionButtons';
+import { uploadAudio } from '../utils/uploadAudio';
+import { useAudioRecorder } from '../hooks/useAudioRecorder';
+import { getServerBaseUrl } from '../utils/env';
 
 export type ScreenStates = "idle"
     | "recording"
@@ -14,10 +17,11 @@ export type ScreenStates = "idle"
 export default function ViewTodos() {
     
     const [currState, setCurrState] = useState<ScreenStates>("idle");
-    const [seconds, setSeconds] = useState(0);
     const [colorIndex, setColorIndex] = useState(0);
     const scaleAnim = useRef(new Animated.Value(1)).current;
     const firstRender = useRef(true);
+    const { start, pause, resume, cancel, stopAndGetBase64, elapsedSeconds } = useAudioRecorder();
+    const serverBaseUrl = getServerBaseUrl();
 
     const formatTime = (totalSeconds: number) => {
         const minutes = Math.floor(totalSeconds / 60);
@@ -43,7 +47,6 @@ export default function ViewTodos() {
         if (currState === "recording") {
             interval = setInterval(() => {
                 setColorIndex((prev) => (prev + 1) % COLOR_TRANSITION.length);
-                setSeconds(prevSeconds => prevSeconds + 1);
             }, 1000);
         }
 
@@ -54,13 +57,45 @@ export default function ViewTodos() {
     }, [currState]);
 
     const handleStateChange = (newState: ScreenStates) => {
-        if ((currState === 'idle' && newState === 'recording') || 
-            newState === 'idle' || 
-            newState === 'processing' ||
-            newState === 'paused') {
-            setSeconds(0);
-        }
-        setCurrState(newState);
+        void (async () => {
+            if ((currState === 'idle') && newState === 'recording') {
+                const ok = await start();
+                if (ok) {
+                    setCurrState('recording');
+                }
+                return;
+            }
+
+            if ((currState === 'recording') && newState === 'paused') {
+                await pause();
+                setCurrState('paused');
+                return;
+            }
+
+            if ((currState === 'paused') && newState === 'recording') {
+                await resume();
+                setCurrState('recording');
+                return;
+            }
+
+            if ((currState === 'recording' || currState === 'paused') && newState === 'processing') {
+                setCurrState('processing');
+                try {
+                    const { base64, filename, mimeType } = await stopAndGetBase64();
+                    await uploadAudio({ serverBaseUrl, filename, mimeType, base64 });
+                } catch {}
+                setCurrState('idle');
+                return;
+            }
+
+            if ((currState === 'recording' || currState === 'paused') && newState === 'idle') {
+                await cancel();
+                setCurrState('idle');
+                return;
+            }
+
+            setCurrState(newState);
+        })();
     };
 
     return (
@@ -95,7 +130,7 @@ export default function ViewTodos() {
                                 </Text>
                                 {(currState === 'recording' || currState === 'paused') && (
                                     <Text className="text-white font-bold text-lg">
-                                        {formatTime(seconds)}
+                                        {formatTime(elapsedSeconds)}
                                     </Text>
                                 )}
                             </View>
@@ -108,7 +143,7 @@ export default function ViewTodos() {
                             
                                 {(currState === 'recording' || currState === 'paused') && (
                                     <Text className="text-white font-bold text-xl">
-                                        {formatTime(seconds)}
+                                        {formatTime(elapsedSeconds)}
                                     </Text>
                                 )
                             }
