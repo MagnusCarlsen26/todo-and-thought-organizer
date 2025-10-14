@@ -22,23 +22,23 @@ export const stateConfig: Record<ScreenStates, {
         "mainButtonText": "Listening...",
         "isBorderAnimation": true,
         "waveAnimationState": "running",
-        "onClickTransition": null,
+        "onClickTransition": "paused",
         "transitionButtons": [
+            {
+                "buttonText": "Done",
+                "onClickTransition": "processing",
+                "bgColor": "bg-lime-800"
+            },
             {
                 "buttonText": "Pause",
                 "onClickTransition": "paused",
-                "bgColor": "bg-emerald-700"
+                "bgColor": "bg-slate-800"
             },
             {
                 "buttonText": "Cancel",
                 "onClickTransition": "idle",
-                "bgColor": "bg-red-500"
+                "bgColor": "bg-slate-800"
             },
-            {
-                "buttonText": "Done",
-                "onClickTransition": "processing",
-                "bgColor": "bg-green-500"
-            }
         ]
     },
     "paused": {
@@ -50,17 +50,17 @@ export const stateConfig: Record<ScreenStates, {
             {
                 "buttonText": "Resume",
                 "onClickTransition": "recording",
-                "bgColor": "bg-emerald-700"
+                "bgColor": "bg-lime-800"
             },
             {
                 "buttonText": "Cancel",
                 "onClickTransition": "idle",
-                "bgColor": "bg-red-500"
+                "bgColor": "bg-slate-800"
             },
             {
                 "buttonText": "Done",
                 "onClickTransition": "processing",
-                "bgColor": "bg-green-500"
+                "bgColor": "bg-slate-800"
             }
         ]
     },

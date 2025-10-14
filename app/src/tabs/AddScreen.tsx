@@ -14,9 +14,16 @@ export type ScreenStates = "idle"
 export default function ViewTodos() {
     
     const [currState, setCurrState] = useState<ScreenStates>("idle");
+    const [seconds, setSeconds] = useState(0);
     const [colorIndex, setColorIndex] = useState(0);
     const scaleAnim = useRef(new Animated.Value(1)).current;
     const firstRender = useRef(true);
+
+    const formatTime = (totalSeconds: number) => {
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    };
 
     useEffect(() => {
         if (firstRender.current) {
@@ -36,6 +43,7 @@ export default function ViewTodos() {
         if (currState === "recording") {
             interval = setInterval(() => {
                 setColorIndex((prev) => (prev + 1) % COLOR_TRANSITION.length);
+                setSeconds(prevSeconds => prevSeconds + 1);
             }, 1000);
         }
 
@@ -44,6 +52,16 @@ export default function ViewTodos() {
             if (interval) clearInterval(interval);
         };
     }, [currState]);
+
+    const handleStateChange = (newState: ScreenStates) => {
+        if ((currState === 'idle' && newState === 'recording') || 
+            newState === 'idle' || 
+            newState === 'processing' ||
+            newState === 'paused') {
+            setSeconds(0);
+        }
+        setCurrState(newState);
+    };
 
     return (
         <View className="h-screen w-screen">
@@ -57,7 +75,7 @@ export default function ViewTodos() {
                 <Pressable
                     onPress={() => {
                         if (stateConfig[currState].onClickTransition) {
-                            setCurrState(stateConfig[currState].onClickTransition);
+                            handleStateChange(stateConfig[currState].onClickTransition);
                         }
                     }}
                     className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 border-4 border-gray-200 w-64 aspect-square justify-center items-center rounded-full transition-all duration-300"
@@ -66,27 +84,47 @@ export default function ViewTodos() {
                     }}
                 >
 
-                    {stateConfig[currState].waveAnimationState === "running" ? (
-                        <View className="grid grid-rows-[3fr_1fr]">
+                    {stateConfig[currState].waveAnimationState === "running" || stateConfig[currState].waveAnimationState === "still" ? (
+                        <View className="grid grid-rows-[2fr_1fr]">
                             <View className="flex justify-center items-center">
-                                <Wave />
+                                <Wave animationState={stateConfig[currState].waveAnimationState} />
                             </View>
-                            <Text className="text-white font-bold text-2xl text-center">
-                                {stateConfig[currState].mainButtonText}
-                            </Text>
+                            <View className="flex justify-start items-center">
+                                <Text className="text-white font-bold text-2xl text-center">
+                                    {stateConfig[currState].mainButtonText}
+                                </Text>
+                                {(currState === 'recording' || currState === 'paused') && (
+                                    <Text className="text-white font-bold text-lg">
+                                        {formatTime(seconds)}
+                                    </Text>
+                                )}
+                            </View>
                         </View>
                     ) : (
-                        <Text className="text-white font-bold text-2xl">
-                            {stateConfig[currState].mainButtonText}
-                        </Text>
+                        <View className="flex justify-center items-center">
+                            <Text className="text-white font-bold text-2xl">
+                                {stateConfig[currState].mainButtonText}
+                            </Text>
+                            
+                                {(currState === 'recording' || currState === 'paused') && (
+                                    <Text className="text-white font-bold text-xl">
+                                        {formatTime(seconds)}
+                                    </Text>
+                                )
+                            }
+                        </View>
+
                     )}
 
                 </Pressable>
 
             </View>
 
-            <View className="absolute bottom-0 -translate-y-1/3 w-full">
-                <StateTransitionButtons currState={currState} setCurrState={setCurrState} />
+            <View className="absolute bottom-0 -translate-y-1/3 w-full px-2">
+                <StateTransitionButtons 
+                    currState={currState} 
+                    handleStateChange={handleStateChange} 
+                />
             </View>
 
         </View>
