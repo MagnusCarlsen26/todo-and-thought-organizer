@@ -8,7 +8,7 @@ import Animated, {
     Easing,
     interpolate,
 } from 'react-native-reanimated';
-import { COLOR_TRANSITION } from '../assets/themes/addScreenThemes';
+import { COLOR_TRANSITION } from '../../assets/themes/addScreenThemes';
 
 const WaveBar = ({ delay_, color_ }: { delay_: number, color_: string }) => {
     const progress = useSharedValue(0);

@@ -1,10 +1,12 @@
 import { Text, View, Pressable, Animated } from 'react-native';
 import React, { useState, useEffect, useRef } from 'react';
 
-import Wave from '../components/Wave';
+import Wave from '../components/addScreen/Wave';
 import { COLOR_TRANSITION } from '../assets/themes/addScreenThemes';
+import { stateConfig } from '../constants/addScreen/stateConfig';
+import StateTransitionButtons from '../components/addScreen/stateTransitionButtons';
 
-type ScreenStates = "idle"
+export type ScreenStates = "idle"
     | "recording"
     | "paused"
     | "processing"
@@ -53,25 +55,29 @@ export default function ViewTodos() {
             >
 
                 <Pressable
-                    onPress={() => setCurrState(currState === "recording" ? "idle" : "recording")}
+                    onPress={() => {
+                        if (stateConfig[currState].onClickTransition) {
+                            setCurrState(stateConfig[currState].onClickTransition);
+                        }
+                    }}
                     className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 border-4 border-gray-200 w-64 aspect-square justify-center items-center rounded-full transition-all duration-300"
                     style={{
                         borderColor: COLOR_TRANSITION[colorIndex],
                     }}
                 >
 
-                    {currState === "recording" ? (
+                    {stateConfig[currState].waveAnimationState === "running" ? (
                         <View className="grid grid-rows-[3fr_1fr]">
                             <View className="flex justify-center items-center">
                                 <Wave />
                             </View>
                             <Text className="text-white font-bold text-2xl text-center">
-                                Listening...
+                                {stateConfig[currState].mainButtonText}
                             </Text>
                         </View>
                     ) : (
                         <Text className="text-white font-bold text-2xl">
-                            Start
+                            {stateConfig[currState].mainButtonText}
                         </Text>
                     )}
 
@@ -79,27 +85,10 @@ export default function ViewTodos() {
 
             </View>
 
-            <View className="absolute bottom-0 -translate-y-1/3 flex-column justify-center items-center gap-2 w-full mt-16">
-                {stateTransitionButton("paused", setCurrState, "bg-emerald-700")}
-                {stateTransitionButton("cancel", setCurrState, "bg-red-500")}
-                {stateTransitionButton("stop", setCurrState, "bg-green-500")}
+            <View className="absolute bottom-0 -translate-y-1/3 w-full">
+                <StateTransitionButtons currState={currState} setCurrState={setCurrState} />
             </View>
 
         </View>
-    );
-}
-
-function stateTransitionButton(
-    state: string,
-    setCurrState: (state: ScreenStates) => void,
-    bgColor: string
-) {
-    return (
-        <Pressable 
-            onPress={() => setCurrState(state)}
-            className={`${bgColor} w-full py-6 border-2 rounded-3xl`}
-        >
-            <Text className="text-white text-center font-bold text-2xl">{state}</Text>
-        </Pressable>
     );
 }
