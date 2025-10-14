@@ -24,22 +24,14 @@ function WaveBar({
 }) {
     const progress = useSharedValue(0);
 
-    const animationLoop = useCallback(() => {
-        progress.value = withTiming(
-            progress.value === 0 ? 1 : 0,
-            { duration: 1000, easing: Easing.linear },
-            (isFinished) => {
-                if (isFinished) {
-                    animationLoop();
-                }
-            }
-        );
-    }, [progress]);
-
     useEffect(() => {
         if (animationState === 'running') {
             const timeout = setTimeout(() => {
-                animationLoop();
+                progress.value = withRepeat(
+                    withTiming(1, { duration: 1000, easing: Easing.linear }),
+                    -1,
+                    true
+                );
             }, delay_);
             return () => clearTimeout(timeout);
         } else {
@@ -51,7 +43,7 @@ function WaveBar({
         return () => {
             cancelAnimation(progress);
         }
-    }, [animationState, delay_, progress, animationLoop]);
+    }, [animationState, delay_, progress]);
 
     const animatedStyle = useAnimatedStyle(() => {
         const height = interpolate(
