@@ -6,3 +6,5 @@
         - Customize categories
         - User constants like - office going timings
         - adjust date according to timezone
+    - Server
+        - maintain a db for usage.

@@ -1,23 +1,40 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "type" : "module",
+  "type": "module",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "ts-node index.ts",
-    "dev": "nodemon --exec ts-node index.ts"
+    "test": "jest",
+    "start": "tsx index.ts",
+    "dev": "tsx watch index.ts",
+    "test:watch": "vitest"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.jsx?$": "babel-jest"
+    }
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@babel/preset-env": "^7.28.3",
     "@types/express": "^5.0.3",
     "@types/node": "^24.7.0",
+    "@types/supertest": "^6.0.3",
     "express": "^5.1.0",
+    "jest": "^30.2.0",
     "nodemon": "^3.1.10",
+    "supertest": "^7.1.4",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.3"
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "dotenv": "^16.4.5",
+    "openai": "^6.3.0"
   }
 }
