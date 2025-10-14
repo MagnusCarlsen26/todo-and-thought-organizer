@@ -113,23 +113,23 @@ export default function ViewTodos() {
                             handleStateChange(stateConfig[currState].onClickTransition);
                         }
                     }}
-                    className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 border-4 border-gray-200 w-64 aspect-square justify-center items-center rounded-full transition-all duration-300"
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 border-4 border-gray-200 aspect-square justify-center items-center rounded-full transition-all duration-300"
                     style={{
                         borderColor: COLOR_TRANSITION[colorIndex],
                     }}
                 >
 
                     {stateConfig[currState].waveAnimationState === "running" || stateConfig[currState].waveAnimationState === "still" ? (
-                        <View className="grid grid-rows-[2fr_1fr]">
-                            <View className="flex justify-center items-center">
+                        <View className="flex flex-col">
+                            <View className="h-1/2 flex justify-end items-center">
                                 <Wave animationState={stateConfig[currState].waveAnimationState} />
                             </View>
-                            <View className="flex justify-start items-center">
-                                <Text className="text-white font-bold text-2xl text-center">
+                            <View className="h-1/3 flex justify-center items-center">
+                                <Text className="text-white font-bold text-lg text-center">
                                     {stateConfig[currState].mainButtonText}
                                 </Text>
                                 {(currState === 'recording' || currState === 'paused') && (
-                                    <Text className="text-white font-bold text-lg">
+                                    <Text className="text-white font-bold text-base">
                                         {formatTime(elapsedSeconds)}
                                     </Text>
                                 )}
