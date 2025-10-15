@@ -19,6 +19,8 @@
         - show how many saved and deleted (urgent)
         - sorting searching filtering todos in view todos screen
         - adding urgency tag
+        - today's todo view
+        - time categories - this week , this month .. are incorrectly mapped (urgent)
     - Server
         - maintain a db for usage.
         - GPT can handle both voice to text and categorization
