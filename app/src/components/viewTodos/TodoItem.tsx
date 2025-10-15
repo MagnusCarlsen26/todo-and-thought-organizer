@@ -1,14 +1,13 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, ImageBackground } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { ValidTodo } from '../../constants/todo.type';
 import { getReminderText } from '../../utils/addScreen/getReminder';
 import CalendarIcon from '../../assets/svgs/calenderSvg';
 import ClockIcon from '../../assets/svgs/clockSvg';
 import SnoozeIcon from '../../assets/svgs/snoozeSvg';
+import { getCategoryTheme, DARK_COLORS } from '../../constants/categoryPalette';
 // import ShoppingImage from '../../assets/images/shopping.jpg';
 // import CareerImage from '../../assets/images/career.jpg';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-
 interface TodoItemProps {
   item: ValidTodo;
   onEdit: (todo: ValidTodo) => void;
@@ -16,45 +15,44 @@ interface TodoItemProps {
   onMarkAsComplete: (todo: ValidTodo) => void;
 }
 
-export default function TodoItem({ item, onEdit, onDelete, onMarkAsComplete }: TodoItemProps) {
+export default function TodoItem({ item, onEdit }: TodoItemProps) {
+  const theme = getCategoryTheme(item.category.category);
 
   return (
-    <View className='border-2 border-gray-600 rounded-lg p-2 mb-2'>
+    <View
+      className='rounded-lg p-3 mb-3'
+      style={{
+        backgroundColor: DARK_COLORS.cardBackground,
+        borderLeftWidth: 2,
+        borderLeftColor: theme.accent,
+      }}
+    >
       <TouchableOpacity onPress={() => onEdit(item)}>
-        {item.category.category === 'Shopping' || item.category.subcategory === 'Shopping' ? (
-          <>
-            <View>
-              <Text className='text-xl font-bold text-white'>{item.todo.heading}</Text>
-              <Text className='text-gray-200'>{item.todo.description}</Text>
-            </View>
-            <ReminderComponent reminder={item.reminder} />
-            <View>
-              <Text className='text-gray-200'>{item.category.subcategory}</Text>
-            </View>
-          </>
-        ) : item.category.subcategory === 'Career' ? (
-          <>
-            <View>
-              <Text className='text-xl font-bold text-black'>{item.todo.heading}</Text>
-              <Text className='text-gray-800'>{item.todo.description}</Text>
-            </View>
-            <ReminderComponent reminder={item.reminder} />
-            <View>
-              <Text className='text-gray-800'>{item.category.subcategory}</Text>
-            </View>
-          </>
-        ) : (
-          <>
-            <View>
-              <Text className='text-xl font-bold'>{item.todo.heading}</Text>
-              <Text className='text-gray-500'>{item.todo.description}</Text>
-            </View>
-            <ReminderComponent reminder={item.reminder} />
-            <View>
-              <Text className='text-gray-500'>{item.category.subcategory}</Text>
-            </View>
-          </>
-        )}
+        <View>
+          <Text className='text-xl font-bold' style={{ color: DARK_COLORS.title }}>
+            {item.todo.heading}
+          </Text>
+          <Text style={{ color: DARK_COLORS.description }}>
+            {item.todo.description}
+          </Text>
+        </View>
+
+        <ReminderComponent reminder={item.reminder} />
+
+        <View
+          style={{
+            alignSelf: 'flex-start',
+            backgroundColor: theme.tagBackground,
+            borderRadius: 9999,
+            paddingHorizontal: 8,
+            paddingVertical: 2,
+            marginTop: 8,
+          }}
+        >
+          <Text style={{ color: theme.tagText, fontWeight: '600' }}>
+            {item.category.subcategory}
+          </Text>
+        </View>
       </TouchableOpacity>
     </View>
   );
@@ -65,28 +63,37 @@ function ReminderComponent({ reminder }: { reminder: ValidTodo["reminder"] }) {
     const reminderText = getReminderText(reminder);
 
     return (
-        <View className="flex-row justify-around">
-            <IDKWhatToNAmeComponent Icon={CalendarIcon} text={reminderText?.date ?? null} />
-            <IDKWhatToNAmeComponent Icon={ClockIcon} text={reminderText?.time ?? null} />
-            <IDKWhatToNAmeComponent Icon={SnoozeIcon} text={reminderText?.snooze ?? null} />
+        <View className="flex-row w-full gap-2 my-2">
+            <IDKWhatToNAmeComponent Icon={CalendarIcon} text={reminderText?.date ?? null} width="w-1/2" />
+            <View className='flex w-1/2 gap-2 pr-2'>
+                <IDKWhatToNAmeComponent Icon={ClockIcon} text={reminderText?.time ?? null} width="w-full" />
+                <IDKWhatToNAmeComponent Icon={SnoozeIcon} text={reminderText?.snooze ?? null} width="w-full" />
+            </View>
         </View>
     );
 }
 
 function IDKWhatToNAmeComponent({ 
     Icon, 
-    text 
+    text,
+    width
 }: { 
     Icon: React.ComponentType<{ size: number, color: string }>, 
     text: string | null
+    width: string
 }) {
 
     if (text === null) return <></>;
 
     return (
-        <View className="flex-row items-center">
-            <Icon size={16} color="gray" />
-            <Text className='text-gray-500 ml-1'>{text}</Text>
+        <View
+          className={`flex-row items-center justify-center rounded-lg p-1 ${width}`}
+          style={{ borderWidth: 1, borderColor: DARK_COLORS.metaBorder }}
+        >
+            <Icon size={16} color={DARK_COLORS.metaIcon} />
+            <Text style={{ color: DARK_COLORS.metaText }} className='ml-1 text-center'>
+              {text}
+            </Text>
         </View>
     );
 }

@@ -4,11 +4,36 @@ import TodoItem from '../components/viewTodos/TodoItem';
 import { useEffect, useState } from 'react';
 import CategorizationModal from '../components/addScreen/CategorizationModal';
 import { ValidTodo } from '../constants/todo.type';
+import { DARK_COLORS } from '../constants/categoryPalette';
 // import { getTodosAsyncStorage } from '../service/asyncStorageService';
 
 export default function ViewTodos() {
 
   const [todos, setTodos] = useState<ValidTodo[]>([
+    {
+      "todo": {
+          "heading": "Go for a walk",
+          "description": "I also have to go for a walk tomorrow."
+      },
+      "category": {
+        "category": "Shopping",
+        "subcategory": "Offline Shopping"
+    },
+      "reminder": {
+          "date": {
+              "year": 2025,
+              "month": 10,
+              "day": 16
+          },
+          "time": {
+              "hour": 12,
+              "minute": 30
+          },
+          "snooze": {
+              "snoozeHours": 60
+          }
+      }
+    },
     {
         "todo": {
             "heading": "Buy pencil cell",
@@ -33,30 +58,7 @@ export default function ViewTodos() {
             }
         }
     },
-    {
-        "todo": {
-            "heading": "Go for a walk",
-            "description": "I also have to go for a walk tomorrow."
-        },
-        "category": {
-            "category": "other",
-            "subcategory": "other"
-        },
-        "reminder": {
-            "date": {
-                "year": 2025,
-                "month": 10,
-                "day": 16
-            },
-            "time": {
-                "hour": 12,
-                "minute": 30
-            },
-            "snooze": {
-                "snoozeHours": 60
-            }
-        }
-    }
+
 ]);
   
   const fetchTodos = async () => {
@@ -97,24 +99,28 @@ export default function ViewTodos() {
   };
 
   return (
-    <View className="m-1">
+    <View className="m-1" style={{ backgroundColor: DARK_COLORS.appBackground }}>
       <ScrollView className='m-1'>
         {Object.keys(dateCategorizedTodos).map(category => (
           <View key={category} className="mb-4">
-            <Text className="text-2xl font-bold mb-2">{category}</Text>
+            <Text className=" text-2xl font-bold mb-2" style={{ color: DARK_COLORS.title }}>{category}</Text>
             {dateCategorizedTodos[category].length > 0 ? (
-              dateCategorizedTodos[category]
-                .map( todo => 
-                  <TodoItem 
-                    item={todo} 
-                    key={todo.todo.heading} 
-                    onEdit={() => handleEditTodo(todo)} 
-                    onDelete={() => handleDeleteTodo(todo)}
-                    onMarkAsComplete={() => handleMarkAsComplete(todo)}
-                  />
-                )
+              <View className="flex-row flex-wrap">
+                {dateCategorizedTodos[category]
+                  .map( todo => 
+                    <View key={todo.todo.heading} className="w-1/2 p-1">
+                      <TodoItem 
+                        item={todo} 
+                        onEdit={() => handleEditTodo(todo)} 
+                        onDelete={() => handleDeleteTodo(todo)}
+                        onMarkAsComplete={() => handleMarkAsComplete(todo)}
+                      />
+                    </View>
+                  )
+                }
+              </View>
             ) : (
-              <Text className="text-gray-500 ml-2">No todos in this category.</Text>
+              <Text className="ml-2" style={{ color: DARK_COLORS.metaText }}>No todos in this category.</Text>
             )}
           </View>
         ))}

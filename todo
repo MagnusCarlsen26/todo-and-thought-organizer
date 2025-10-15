@@ -17,6 +17,8 @@
         - swipe gesture to navigate through todos
         [x] save and delete options (urgent)
         - show how many saved and deleted (urgent)
+        - today's todo view
+        - time categories - this week , this month .. are incorrectly mapped (urgent)
     - Server
         - maintain a db for usage.
         - GPT can handle both voice to text and categorization
