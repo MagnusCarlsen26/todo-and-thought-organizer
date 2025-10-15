@@ -131,12 +131,6 @@ export default function AddScreen() {
         setCategorizationResult(null);
     };
 
-    const handleSaveCategorization = () => {
-        // Here you would typically save the categorized todo to your storage/state
-        console.log('Saving categorized todo:', categorizationResult);
-        handleCloseModal();
-    };
-
     return (
         <View className="h-screen w-screen">
             <View 
@@ -220,7 +214,6 @@ export default function AddScreen() {
                 // visible={showCategorizationModal}
                 categorizationResult={categorizationResult ?? []}
                 onClose={handleCloseModal}
-                onSave={handleSaveCategorization}
             />
 
         </View>

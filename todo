@@ -1,11 +1,26 @@
 - Compromises
     - UI
-        - Fake audio wave in /add screen.
-        - Loading bar in /add screen when voice is sent
+        - add screen
+            - Fake audio wave in /add screen.
+            [x] Loading bar in /add screen when voice is sent
+            [x] Dark theme in set time picker in edit todo
+            - set time is showing 17:47 PM (urgent)
+            - typography everywhere
+        - view todos screen
+            - edit modal should close when tapped outside
+
     - Features
         - Customize categories
         - User constants like - office going timings
         - adjust date according to timezone
+        - add todo/note from image
+        - swipe gesture to navigate through todos
+        [x] save and delete options (urgent)
+        - show how many saved and deleted (urgent)
+        - sorting searching filtering todos in view todos screen
+        - adding urgency tag
+        - today's todo view
+        - time categories - this week , this month .. are incorrectly mapped (urgent)
     - Server
         - maintain a db for usage.
         - GPT can handle both voice to text and categorization

@@ -1,4 +1,5 @@
 import 'react-native-gesture-handler';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { DarkTheme, NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View } from 'react-native';
@@ -13,7 +14,7 @@ const Tab = createBottomTabNavigator();
 
 export default function App() {
   return (
-    <View className="flex-1 bg-slate-950">
+    <GestureHandlerRootView className="flex-1 bg-slate-950">
       <NavigationContainer theme={DarkTheme}>
         <StatusBar style="light" backgroundColor="#0b0f16" />
         <Tab.Navigator 
@@ -29,7 +30,7 @@ export default function App() {
               fontSize: 12
             }
           }}
-          initialRouteName="Add"
+          initialRouteName="Todos"
         >
         <Tab.Screen
           name="Todos"
@@ -55,6 +56,6 @@ export default function App() {
         
         </Tab.Navigator>
       </NavigationContainer>
-    </View>
+    </GestureHandlerRootView>
   );
 }
