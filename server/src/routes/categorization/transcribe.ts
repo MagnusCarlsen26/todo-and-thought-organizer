@@ -30,7 +30,7 @@ router.post('/transcribeAndCategorize', async (req, res) => {
         );
 
         // Get categorization from OpenAI
-        let categorization = await callGeminiAPI(
+        let categorization = await callOpenAIAPI(
             "gpt-5-mini",
             `${CATEGORISE_TODO_PROMPT}\n\nTranscription:\n${transcription ?? ''}`
         );

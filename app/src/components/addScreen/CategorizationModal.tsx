@@ -1,6 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Modal, TextInput, Button, ScrollView, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
+import React, { useState, useEffect, useReducer } from 'react';
+import { View, Text, Modal, TextInput, Button, ScrollView, KeyboardAvoidingView, Platform, StyleSheet, TouchableOpacity } from 'react-native';
 import { ValidTodo } from '../../constants/todo.type';
+import CalendarSvg from '../../assets/svgs/calenderSvg';
+import ClockSvg from '../../assets/svgs/clockSvg';
+import SnoozeSvg from '../../assets/svgs/snoozeSvg';
+import { getReminderText } from '../../utils/addScreen/getReminder';
+import { reducer, initialState } from '../../utils/addScreen/reducer';
+import EditCalender from '../editTodo/editCalender';
+import EditTime from '../editTodo/editTime';
+import EditSnooze from '../editTodo/editSnooze';
 
 type CategorizationModalProps = {
   visible: boolean;
@@ -20,6 +28,13 @@ export default function CategorizationModal({
 
   const [editedCategorization, setEditedCategorization] = useState<ValidTodo[]>(categorizationResult);
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [showTimePicker, setShowTimePicker] = useState(false);
+  const [showSnoozePicker, setShowSnoozePicker] = useState(false);
+
+  const [state, dispatch] = useReducer(reducer, initialState);
+
 
   console.log('visible', visible);
 
@@ -62,25 +77,14 @@ export default function CategorizationModal({
       onClose();
     }
   };
-  
-  const renderReminder = () => {
-    const reminder = editedCategorization[currentIndex].reminder;
-    if (!reminder) return <Text className="text-gray-400">No reminder set</Text>;
-  
-    const { date, time } = reminder;
-    const dateString = date ? `${date.year}-${String(date.month).padStart(2, '0')}-${String(date.day).padStart(2, '0')}` : 'No date';
-    const timeString = time ? `${String(time.hour).padStart(2, '0')}:${String(time.minute).padStart(2, '0')}` : 'No time';
-  
-    return (
-      <View>
-        <Text className="text-white text-lg font-semibold">Reminder</Text>
-        <Text className="text-white">Date: {dateString}</Text>
-        <Text className="text-white">Time: {timeString}</Text>
-      </View>
-    );
-  };
 
   console.log('visible', visible);
+
+  const formattedDate = editedCategorization[currentIndex].reminder?.date ?
+  `${editedCategorization[currentIndex].reminder.date.year}-${String(editedCategorization[currentIndex].reminder.date.month).padStart(2, '0')}-${String(editedCategorization[currentIndex].reminder.date.day).padStart(2, '0')}` :
+  '';
+
+  const reminderText = getReminderText(editedCategorization[currentIndex].reminder);
 
   return (
     <Modal
@@ -101,66 +105,69 @@ export default function CategorizationModal({
       >
         <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
           <View className="bg-gray-800 p-6 rounded-lg shadow-lg" style={{ width: '90%' }}>
-            <View className="flex-row justify-between items-center mb-4">
-              <Text className="text-white text-2xl font-bold">Categorized Todo</Text>
-              {editedCategorization.length > 1 && (
-                <Text className="text-white text-sm">
-                  {currentIndex + 1} of {editedCategorization.length}
-                </Text>
-              )}
-            </View>
-            
-            <View className="mb-4">
-              <Text className="text-white text-lg font-semibold">Heading</Text>
-              <TextInput
-                className="bg-gray-700 text-white rounded p-2 mt-1"
-                value={editedCategorization[currentIndex].todo.heading}
-                // onChangeText={(text) => setEditedCategorization({ ...editedCategorization, todo: { ...editedCategorization[currentIndex].todo, heading: text } })}
-              />
-            </View>
-            
-            <View className="mb-4">
-              <Text className="text-white text-lg font-semibold">Description</Text>
-              <TextInput
-                className="bg-gray-700 text-white rounded p-2 mt-1 h-24"
-                value={editedCategorization[currentIndex].todo.description}
-                // onChangeText={(text) => setEditedCategorization({ ...editedCategorization, todo: { ...editedCategorization[currentIndex].todo, description: text } })}
-                multiline
-              />
+
+            <Text
+              className="text-white text-3xl font-semibold text-center border-b border-gray-300 mb-2"
+            >
+              {editedCategorization[currentIndex].todo.heading}
+            </Text>
+
+            {/* Description */}
+            <Text className="text-gray-400 mb-4">
+              {editedCategorization[currentIndex].todo.description}
+            </Text>
+
+            <View className="flex-row justify-around w-full mb-4 gap-2">
+                <TouchableOpacity
+                    onPress={() => setShowCalendar(!showCalendar)}
+                    className="flex-row items-center bg-blue-200 p-2 rounded-lg"
+                >
+                    <CalendarSvg size={20} />
+                    <Text className="text-blue-800 ml-2">
+                        {reminderText?.date || "Set Date"}
+                    </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    onPress={() => setShowTimePicker(!showTimePicker)}
+                    className="flex-row items-center bg-purple-200 p-2 rounded-lg"
+                >
+                    <ClockSvg size={20} />
+                    <Text className="text-purple-800 ml-2">
+                        {reminderText?.time || "Set Time"}
+                    </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    onPress={() => {setShowSnoozePicker(!showSnoozePicker)}}
+                    className="flex-row items-center bg-orange-200 p-2 rounded-lg"
+                >
+                    <SnoozeSvg size={20} />
+                    <Text className="text-orange-800 ml-2">
+                        {reminderText?.snooze || "Set Snooze"}
+                    </Text>
+                </TouchableOpacity>
             </View>
 
-            <View className="mb-4">
-              <Text className="text-white text-lg font-semibold">Category</Text>
-              <Text className="text-white">{editedCategorization[currentIndex].category.category}</Text>
-              <Text className="text-sm text-gray-400">{editedCategorization[currentIndex].category.subcategory}</Text>
-            </View>
+            <EditCalender 
+                showCalendar={showCalendar} 
+                formattedDate={formattedDate} 
+                dispatch={dispatch} 
+                setShowCalendar={setShowCalendar} 
+            />
+            <EditTime 
+                showTimePicker={showTimePicker} 
+                editedTodo={editedCategorization[currentIndex]} 
+                dispatch={dispatch} 
+                setShowTimePicker={setShowTimePicker} 
+            />
+            <EditSnooze 
+                showSnoozePicker={showSnoozePicker} 
+                dispatch={dispatch} 
+                setShowSnoozePicker={setShowSnoozePicker} 
+            />
 
-            <View className="mb-4">
-              {renderReminder()}
-            </View>
 
-            <View className="flex-row justify-around mt-4">
-              {editedCategorization.length > 1 && (
-                <View className="flex-row justify-between w-full mb-2">
-                  <Button
-                    title="Previous"
-                    onPress={goToPrevious}
-                    disabled={!hasPrevious}
-                    color="#9E9E9E"
-                  />
-                  <Button
-                    title="Next"
-                    onPress={goToNext}
-                    disabled={!hasNext}
-                    color="#9E9E9E"
-                  />
-                </View>
-              )}
-              <View className="flex-row justify-around w-full">
-                <Button title="Cancel" onPress={onClose} color="#f44336" />
-                <Button title="Save" onPress={handleSave} color="#4CAF50" />
-              </View>
-            </View>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
