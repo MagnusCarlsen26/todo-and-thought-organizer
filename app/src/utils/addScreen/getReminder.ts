@@ -20,14 +20,14 @@ export function getReminderText( reminder: ValidTodo["reminder"]) {
     }
     
     if (reminder.time) {
-
-        if (reminder.time.hour && reminder.time.minute) {
-            const AmPm = reminder.time.hour >= 12 ? "PM" : "AM";
-
-            if ( reminder.time.minute === 0 ) {
-                reminderText.time = `${reminder.time.hour} ${AmPm}`;
+        const hour = reminder.time.hour;
+        const minute = reminder.time.minute;
+        if (hour !== null && minute !== null) {
+            const AmPm = hour >= 12 ? "PM" : "AM";
+            if (minute === 0) {
+                reminderText.time = `${hour} ${AmPm}`;
             } else {
-                reminderText.time = `${reminder.time.hour}:${String(reminder.time.minute).padStart(2, '0')} ${AmPm}`;
+                reminderText.time = `${hour}:${String(minute).padStart(2, '0')} ${AmPm}`;
             }
         } else {
             reminderText.time = null

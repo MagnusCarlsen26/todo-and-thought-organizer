@@ -24,9 +24,19 @@ export default function CategorizationModal({
   onSave 
 }: CategorizationModalProps) {
   
-  const [editedCategorization, setEditedCategorization] = useState<ValidTodo[]>(categorizationResult || []);
-  function dispatch(action: any) {}
+  // Reducer to manage the list of todos by delegating to single-todo reducer
+  const listReducer = (state: ValidTodo[], action: any): ValidTodo[] => {
+    if (action?.type === 'reset') return action.payload || [];
+    const { index, ...todoAction } = action || {};
+    if (typeof index !== 'number') return state;
+    return state.map((item, i) => (i === index ? (reducer(item, todoAction) ?? item) : item));
+  };
+
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [editedCategorization, listDispatch] = useReducer(listReducer, categorizationResult || []);
+  const dispatch = React.useCallback((action: any) => {
+    listDispatch({ ...action, index: currentIndex });
+  }, [currentIndex]);
 
   const [showCalendar, setShowCalendar] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
@@ -35,10 +45,7 @@ export default function CategorizationModal({
   console.log('editedCategorization', categorizationResult);
 
   useEffect(() => {
-    
-    let temp = categorizationResult
-    setEditedCategorization(temp);
-
+    listDispatch({ type: 'reset', payload: categorizationResult || [] });
   }, [categorizationResult]);
 
   console.log('editedCategorization', editedCategorization);
@@ -119,7 +126,7 @@ export default function CategorizationModal({
                     multiline
                 />
 
-            <View className="flex-row justify-around w-full mb-4 gap-2">
+            <View className="flex-row justify-around w-full mt-2 mb-4 gap-2">
                 <TouchableOpacity
                     onPress={() => setShowCalendar(!showCalendar)}
                     className="flex-row items-center bg-blue-200 p-2 rounded-lg"
