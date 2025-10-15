@@ -26,6 +26,8 @@ type CategorizationModalProps = {
   onClose: () => void;
   categorizationResult: ValidTodo[];
   closeOnBackdropPress?: boolean;
+  onSave?: (editedTodos: ValidTodo[]) => void;
+  onDelete?: (todoToDelete: ValidTodo) => void;
 };
 
 export default function CategorizationModal({ 
@@ -33,6 +35,8 @@ export default function CategorizationModal({
   onClose, 
   categorizationResult, 
   closeOnBackdropPress = false,
+  onSave,
+  onDelete,
 }: CategorizationModalProps) {
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -97,8 +101,8 @@ export default function CategorizationModal({
             <View className="bg-slate-950 p-6 rounded-lg shadow-lg border border-gray-500" style={{ width: '100%' }}>
 
                   <View className="flex-row justify-between w-full mt-2 mb-6 gap-2">
-                    <DeleteButton handleDelete={() => handleDelete(onClose)} />
-                    <SaveButton handleSave={() => handleSave(onClose)} />
+                    <DeleteButton handleDelete={() => handleDelete(onClose, onDelete, editedCategorization[currentIndex])} />
+                    <SaveButton handleSave={() => handleSave(onClose, onSave, editedCategorization)} />
                   </View>
 
                   <TextInput

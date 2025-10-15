@@ -1,13 +1,27 @@
 export const handleSave = (
-    onClose: () => void
+    onClose: () => void,
+    onSave?: (editedTodos: any[]) => void,
+    editedTodos?: any[]
 ) => {
-    // TODO: implement save logic
-    onClose()
+    try {
+        if (onSave && editedTodos) {
+            onSave(editedTodos);
+        }
+    } finally {
+        onClose();
+    }
 };
 
 export const handleDelete = (
-    onClose: () => void
+    onClose: () => void,
+    onDelete?: (todoToDelete: any) => void,
+    todoToDelete?: any
 ) => {
-    // TODO: implement delete logic
-    onClose()
+    try {
+        if (onDelete && todoToDelete) {
+            onDelete(todoToDelete);
+        }
+    } finally {
+        onClose();
+    }
 };
