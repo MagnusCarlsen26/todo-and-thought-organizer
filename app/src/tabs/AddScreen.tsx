@@ -1,7 +1,8 @@
-import { Text, View, Pressable, Animated } from 'react-native';
+import { Text, View, Pressable, Animated, Easing } from 'react-native';
 import React, { useState, useEffect, useRef } from 'react';
 
 import Wave from '../components/addScreen/Wave';
+import LoadingBar from '../components/addScreen/loadingBar';
 import { COLOR_TRANSITION } from '../assets/themes/addScreenThemes';
 import { stateConfig } from '../constants/addScreen/stateConfig';
 import StateTransitionButtons from '../components/addScreen/stateTransitionButtons';
@@ -18,6 +19,10 @@ export default function AddScreen() {
     const [currState, setCurrState] = useState<ScreenStates>("idle");
     const [colorIndex, setColorIndex] = useState(0);
     const scaleAnim = useRef(new Animated.Value(1)).current;
+    
+    const progressAnim = useRef(new Animated.Value(0)).current;
+    const [progressBarWidth, setProgressBarWidth] = useState(0);
+    
     const firstRender = useRef(true);
     const { start, pause, resume, cancel, stopAndGetBase64, elapsedSeconds } = useAudioRecorder();
 
@@ -78,14 +83,46 @@ export default function AddScreen() {
 
             if ((currState === 'recording' || currState === 'paused') && newState === 'processing') {
                 setCurrState('processing');
+
+                // Reset and start fake progress to 90% over 5s
+                progressAnim.setValue(0);
+                const ninetyPercentAnimation = new Promise<void>((resolve) => {
+                    Animated.timing(progressAnim, {
+                        toValue: 0.9,
+                        duration: 5000,
+                        easing: Easing.out(Easing.cubic),
+                        useNativeDriver: false, // width animation cannot use native driver
+                    }).start(() => resolve());
+                });
+
                 try {
+                    // Stop recording and start upload
                     const { base64, mimeType } = await stopAndGetBase64();
-                    const result = await uploadAudio({ mimeType, base64 });
+                    const uploadPromise = uploadAudio({ mimeType, base64 });
+
+                    // Wait for both: fake progress to 90% and the real upload to complete
+                    const [_, result] = await Promise.all([ninetyPercentAnimation, uploadPromise]);
+
+                    // Smoothly fill the remaining 10% when the response is received
+                    await new Promise<void>((resolve) => {
+                        Animated.timing(progressAnim, {
+                            toValue: 1,
+                            duration: 300,
+                            easing: Easing.inOut(Easing.quad),
+                            useNativeDriver: false,
+                        }).start(() => resolve());
+                    });
+
                     console.log('Upload result:', result);
                 } catch (error) {
                     console.error('Upload failed:', error);
+                } finally {
+                    // Briefly show 100% then reset
+                    setTimeout(() => {
+                        setCurrState('idle');
+                        progressAnim.setValue(0);
+                    }, 150);
                 }
-                setCurrState('idle');
                 return;
             }
 
@@ -137,18 +174,32 @@ export default function AddScreen() {
                             </View>
                         </View>
                     ) : (
-                        <View className="flex justify-center items-center">
-                            <Text className="text-white font-bold text-2xl">
-                                {stateConfig[currState].mainButtonText}
-                            </Text>
-                            
-                                {(currState === 'recording' || currState === 'paused') && (
-                                    <Text className="text-white font-bold text-xl">
-                                        {formatTime(elapsedSeconds)}
-                                    </Text>
-                                )
-                            }
-                        </View>
+                        currState === 'processing' ? (
+                            <View className="flex justify-center items-center w-full">
+                                <Text className="text-white font-bold text-2xl">
+                                    {stateConfig[currState].mainButtonText}
+                                </Text>
+                                <LoadingBar 
+                                    progress={progressAnim}
+                                    widthPx={progressBarWidth}
+                                    tintColor={COLOR_TRANSITION[colorIndex]}
+                                    onMeasuredWidth={(w) => setProgressBarWidth(w)}
+                                />
+                            </View>
+                        ) : (
+                            <View className="flex justify-center items-center">
+                                <Text className="text-white font-bold text-2xl">
+                                    {stateConfig[currState].mainButtonText}
+                                </Text>
+                                
+                                    {(currState === 'recording' || currState === 'paused') && (
+                                        <Text className="text-white font-bold text-xl">
+                                            {formatTime(elapsedSeconds)}
+                                        </Text>
+                                    )
+                                }
+                            </View>
+                        )
 
                     )}
 
