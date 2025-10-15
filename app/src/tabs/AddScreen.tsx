@@ -1,13 +1,15 @@
-import { Text, View, Pressable, Animated, Easing } from 'react-native';
+import { Text, View, Pressable, Animated } from 'react-native';
 import React, { useState, useEffect, useRef } from 'react';
+
+import { COLOR_TRANSITION } from '../assets/themes/addScreenThemes';
+import { stateConfig } from '../constants/addScreen/stateConfig';
+import { useAudioRecorder } from '../hooks/useAudioRecorder';
+import { formatTime } from '../utils/addScreen/formatTime';
+import { handleStateChangeLogic } from '../utils/addScreen/handleStateChange';
 
 import Wave from '../components/addScreen/Wave';
 import LoadingBar from '../components/addScreen/loadingBar';
-import { COLOR_TRANSITION } from '../assets/themes/addScreenThemes';
-import { stateConfig } from '../constants/addScreen/stateConfig';
 import StateTransitionButtons from '../components/addScreen/stateTransitionButtons';
-import { uploadAudio } from '../utils/uploadAudio';
-import { useAudioRecorder } from '../hooks/useAudioRecorder';
 
 export type ScreenStates = "idle"
     | "recording"
@@ -25,12 +27,6 @@ export default function AddScreen() {
     
     const firstRender = useRef(true);
     const { start, pause, resume, cancel, stopAndGetBase64, elapsedSeconds } = useAudioRecorder();
-
-    const formatTime = (totalSeconds: number) => {
-        const minutes = Math.floor(totalSeconds / 60);
-        const seconds = totalSeconds % 60;
-        return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    };
 
     useEffect(() => {
         if (firstRender.current) {
@@ -60,80 +56,17 @@ export default function AddScreen() {
     }, [currState]);
 
     const handleStateChange = (newState: ScreenStates) => {
-        void (async () => {
-            if ((currState === 'idle') && newState === 'recording') {
-                const ok = await start();
-                if (ok) {
-                    setCurrState('recording');
-                }
-                return;
-            }
-
-            if ((currState === 'recording') && newState === 'paused') {
-                await pause();
-                setCurrState('paused');
-                return;
-            }
-
-            if ((currState === 'paused') && newState === 'recording') {
-                await resume();
-                setCurrState('recording');
-                return;
-            }
-
-            if ((currState === 'recording' || currState === 'paused') && newState === 'processing') {
-                setCurrState('processing');
-
-                // Reset and start fake progress to 90% over 5s
-                progressAnim.setValue(0);
-                const ninetyPercentAnimation = new Promise<void>((resolve) => {
-                    Animated.timing(progressAnim, {
-                        toValue: 0.9,
-                        duration: 5000,
-                        easing: Easing.out(Easing.cubic),
-                        useNativeDriver: false, // width animation cannot use native driver
-                    }).start(() => resolve());
-                });
-
-                try {
-                    // Stop recording and start upload
-                    const { base64, mimeType } = await stopAndGetBase64();
-                    const uploadPromise = uploadAudio({ mimeType, base64 });
-
-                    // Wait for both: fake progress to 90% and the real upload to complete
-                    const [_, result] = await Promise.all([ninetyPercentAnimation, uploadPromise]);
-
-                    // Smoothly fill the remaining 10% when the response is received
-                    await new Promise<void>((resolve) => {
-                        Animated.timing(progressAnim, {
-                            toValue: 1,
-                            duration: 300,
-                            easing: Easing.inOut(Easing.quad),
-                            useNativeDriver: false,
-                        }).start(() => resolve());
-                    });
-
-                    console.log('Upload result:', result);
-                } catch (error) {
-                    console.error('Upload failed:', error);
-                } finally {
-                    // Briefly show 100% then reset
-                    setTimeout(() => {
-                        setCurrState('idle');
-                        progressAnim.setValue(0);
-                    }, 150);
-                }
-                return;
-            }
-
-            if ((currState === 'recording' || currState === 'paused') && newState === 'idle') {
-                await cancel();
-                setCurrState('idle');
-                return;
-            }
-
-            setCurrState(newState);
-        })();
+        handleStateChangeLogic({
+            newState,
+            currState,
+            setCurrState,
+            progressAnim,
+            start,
+            pause,
+            resume,
+            cancel,
+            stopAndGetBase64,
+        });
     };
 
     return (
