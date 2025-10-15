@@ -3,8 +3,6 @@ import { dateCategorizeTodos } from '../utils/viewTodos/dateCategorizeTodos';
 import TodoItem from '../components/viewTodos/TodoItem';
 import { useEffect, useState } from 'react';
 import CategorizationModal from '../components/addScreen/CategorizationModal';
-import SwipeableModal from '../components/viewTodos/SwipeableModal';
-import SwipeableContent from '../components/viewTodos/SwipeableContent';
 import { ValidTodo } from '../constants/todo.type';
 // import { getTodosAsyncStorage } from '../service/asyncStorageService';
 
@@ -27,38 +25,38 @@ export default function ViewTodos() {
                 "day": 16
             },
             "time": {
-                "hour": null,
-                "minute": null
+                "hour": 8,
+                "minute": 0
             },
             "snooze": {
-                "snoozeHours": null
+                "snoozeHours": 1
             }
         }
     },
-    // {
-    //     "todo": {
-    //         "heading": "Go for a walk",
-    //         "description": "I also have to go for a walk tomorrow."
-    //     },
-    //     "category": {
-    //         "category": "other",
-    //         "subcategory": "other"
-    //     },
-    //     "reminder": {
-    //         "date": {
-    //             "year": 2025,
-    //             "month": 10,
-    //             "day": 16
-    //         },
-    //         "time": {
-    //             "hour": null,
-    //             "minute": null
-    //         },
-    //         "snooze": {
-    //             "snoozeHours": null
-    //         }
-    //     }
-    // }
+    {
+        "todo": {
+            "heading": "Go for a walk",
+            "description": "I also have to go for a walk tomorrow."
+        },
+        "category": {
+            "category": "other",
+            "subcategory": "other"
+        },
+        "reminder": {
+            "date": {
+                "year": 2025,
+                "month": 10,
+                "day": 16
+            },
+            "time": {
+                "hour": 12,
+                "minute": 30
+            },
+            "snooze": {
+                "snoozeHours": 60
+            }
+        }
+    }
 ]);
   
   const fetchTodos = async () => {
@@ -76,10 +74,6 @@ export default function ViewTodos() {
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedTodo, setSelectedTodo] = useState<ValidTodo | null>(null);
-  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
-  const [todoToDelete, setTodoToDelete] = useState<ValidTodo | null>(null);
-  const [isMarkAsCompleteModalVisible, setIsMarkAsCompleteModalVisible] = useState(false);
-  const [todoToMarkAsComplete, setTodoToMarkAsComplete] = useState<ValidTodo | null>(null);
 
   const handleEditTodo = (todo: ValidTodo) => {
     setSelectedTodo(todo);
@@ -91,39 +85,15 @@ export default function ViewTodos() {
     setSelectedTodo(null);
   };
 
-  const handleDeleteTodo = (todo: ValidTodo) => {
-    setTodoToDelete(todo);
-    setIsDeleteModalVisible(true);
-  };
-
-  const handleConfirmDelete = async (todo: ValidTodo) => {
+  const handleDeleteTodo = async (todo: ValidTodo) => {
     const updatedTodos = todos.filter(item => item.todo.heading !== todo.todo.heading);
     // await storeTodos(updatedTodos);
     setTodos(updatedTodos);
-    setIsDeleteModalVisible(false);
-    setTodoToDelete(null);
   };
 
-  const handleCloseDeleteModal = () => {
-    setIsDeleteModalVisible(false);
-    setTodoToDelete(null);
-  };
-
-  const handleMarkAsComplete = (todo: ValidTodo) => {
-    setTodoToMarkAsComplete(todo);
-    setIsMarkAsCompleteModalVisible(true);
-  };
-
-  const handleConfirmMarkAsComplete = async (todo: ValidTodo) => {
+  const handleMarkAsComplete = async (todo: ValidTodo) => {
     // User will fill this function to mark todo as complete
     console.log("Marking as complete:", todo.todo.heading);
-    setIsMarkAsCompleteModalVisible(false);
-    setTodoToMarkAsComplete(null);
-  };
-
-  const handleCloseMarkAsCompleteModal = () => {
-    setIsMarkAsCompleteModalVisible(false);
-    setTodoToMarkAsComplete(null);
   };
 
   return (
@@ -156,38 +126,6 @@ export default function ViewTodos() {
           onClose={handleCloseModal}
           categorizationResult={[selectedTodo]}
         />
-      )}
-
-      {todoToDelete && (
-        <SwipeableModal
-          isVisible={isDeleteModalVisible}
-          onClose={handleCloseDeleteModal}
-        >
-          <SwipeableContent
-            todo={todoToDelete}
-            onClose={handleCloseDeleteModal}
-            onConfirmAction={handleConfirmDelete}
-            actionText="Delete"
-            actionDescription="Are you sure you want to delete this todo?"
-            actionColor="bg-red-500"
-          />
-        </SwipeableModal>
-      )}
-
-      {todoToMarkAsComplete && (
-        <SwipeableModal
-          isVisible={isMarkAsCompleteModalVisible}
-          onClose={handleCloseMarkAsCompleteModal}
-        >
-          <SwipeableContent
-            todo={todoToMarkAsComplete}
-            onClose={handleCloseMarkAsCompleteModal}
-            onConfirmAction={handleConfirmMarkAsComplete}
-            actionText="Mark as Complete"
-            actionDescription="Are you sure you want to mark this todo as complete?"
-            actionColor="bg-green-500"
-          />
-        </SwipeableModal>
       )}
     </View>
   );

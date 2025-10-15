@@ -1,10 +1,14 @@
 - Compromises
     - UI
-        - Fake audio wave in /add screen.
-        [x] Loading bar in /add screen when voice is sent
-        [x] Dark theme in set time picker in edit todo
-        - set time is showing 17:47 PM (urgent)
-        - typography everywhere
+        - add screen
+            - Fake audio wave in /add screen.
+            [x] Loading bar in /add screen when voice is sent
+            [x] Dark theme in set time picker in edit todo
+            - set time is showing 17:47 PM (urgent)
+            - typography everywhere
+        - view todos screen
+            - edit modal should close when tapped outside
+
     - Features
         - Customize categories
         - User constants like - office going timings
