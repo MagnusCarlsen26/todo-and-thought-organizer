@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import CategorizationModal from '../components/addScreen/CategorizationModal';
 import { ValidTodo } from '../constants/todo.type';
 import { DARK_COLORS } from '../constants/categoryPalette';
+import { SafeAreaView } from 'react-native-safe-area-context';
 // import { getTodosAsyncStorage } from '../service/asyncStorageService';
 
 export default function ViewTodos() {
@@ -99,7 +100,7 @@ export default function ViewTodos() {
   };
 
   return (
-    <View className="m-1" style={{ backgroundColor: DARK_COLORS.appBackground }}>
+    <SafeAreaView className="p-1" style={{ backgroundColor: DARK_COLORS.appBackground }} edges={['top', 'bottom']}>
       <ScrollView className='m-1'>
         {Object.keys(dateCategorizedTodos).map(category => (
           <View key={category} className="mb-4">
@@ -133,6 +134,6 @@ export default function ViewTodos() {
           categorizationResult={[selectedTodo]}
         />
       )}
-    </View>
+    </SafeAreaView>
   );
 };
