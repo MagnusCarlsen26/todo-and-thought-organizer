@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useReducer } from 'react';
-import { View, Text, Modal, TextInput, Button, ScrollView, KeyboardAvoidingView, Platform, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Modal, TextInput, Button, ScrollView, KeyboardAvoidingView, Platform, StyleSheet, TouchableOpacity, Pressable } from 'react-native';
 import { ValidTodo } from '../../constants/todo.type';
 import CalendarSvg from '../../assets/svgs/calenderSvg';
 import ClockSvg from '../../assets/svgs/clockSvg';
@@ -176,6 +176,23 @@ export default function CategorizationModal({
                 setShowSnoozePicker={setShowSnoozePicker} 
             />
 
+            <View className="flex-row justify-between w-full mt-2 mb-4 gap-2">
+              <Pressable
+                className='border border-gray-400 px-4 py-2 rounded-md'
+                onPress={goToPrevious}
+              >
+                <Text className="text-gray-400">Previous</Text>
+              </Pressable>
+              <View className="flex-1 items-center justify-center">
+                <Text className="text-gray-400">{currentIndex + 1} / {editedCategorization.length}</Text>
+              </View>
+              <Pressable
+                className='border border-gray-400 px-4 py-2 rounded-md'
+                onPress={goToNext}
+              >
+                <Text className="text-gray-400">Next</Text>
+              </Pressable>
+            </View>
 
           </View>
         </ScrollView>
