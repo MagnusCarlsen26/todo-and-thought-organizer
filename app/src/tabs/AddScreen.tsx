@@ -220,7 +220,6 @@ export default function AddScreen() {
                 // visible={showCategorizationModal}
                 categorizationResult={categorizationResult ?? []}
                 onClose={handleCloseModal}
-                onSave={handleSaveCategorization}
             />
 
         </View>

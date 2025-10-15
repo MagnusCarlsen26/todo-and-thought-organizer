@@ -1,3 +1,15 @@
+import { ValidTodo } from "../../../constants/todo.type";
+
+export const listReducer = (state: ValidTodo[], action: any): ValidTodo[] => {
+
+    if (action?.type === 'reset') return action.payload || [];
+
+    const { index, ...todoAction } = action || {};
+    if (typeof index !== 'number') return state;
+    
+    return state.map((item, i) => (i === index ? (reducer(item, todoAction) ?? item) : item));
+};
+
 export const reducer = (state: any, action: any) => {
 
     switch (action.type) {
