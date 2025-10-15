@@ -53,30 +53,30 @@ export default function AddScreen() {
                 }
             }
         },
-        {
-            "todo": {
-                "heading": "Go for a walk",
-                "description": "I also have to go for a walk tomorrow."
-            },
-            "category": {
-                "category": "other",
-                "subcategory": "other"
-            },
-            "reminder": {
-                "date": {
-                    "year": 2025,
-                    "month": 10,
-                    "day": 16
-                },
-                "time": {
-                    "hour": null,
-                    "minute": null
-                },
-                "snooze": {
-                    "snoozeHours": null
-                }
-            }
-        }
+        // {
+        //     "todo": {
+        //         "heading": "Go for a walk",
+        //         "description": "I also have to go for a walk tomorrow."
+        //     },
+        //     "category": {
+        //         "category": "other",
+        //         "subcategory": "other"
+        //     },
+        //     "reminder": {
+        //         "date": {
+        //             "year": 2025,
+        //             "month": 10,
+        //             "day": 16
+        //         },
+        //         "time": {
+        //             "hour": null,
+        //             "minute": null
+        //         },
+        //         "snooze": {
+        //             "snoozeHours": null
+        //         }
+        //     }
+        // }
     ]
     );
     
