@@ -37,6 +37,7 @@
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "dotenv": "^16.4.5",
-    "openai": "^6.3.0"
+    "openai": "^6.3.0",
+    "zod": "^4.1.12"
   }
 }

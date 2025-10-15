@@ -1,6 +1,7 @@
 import { CATEGORISE_TODO_PROMPT, TRANSCRIBE_AUDIO_PROMPT } from "../../constants/systemPrompt.js";
 import { callOpenAIAPI } from "../../llmService/OpenAI.js";
 import { callGeminiAPI } from "../../llmService/Gemini.js";
+import { isValidTodo } from "../../utils/isValidTodo.js";
 
 import { Router } from 'express';
 const router = Router();
@@ -29,12 +30,55 @@ router.post('/transcribeAndCategorize', async (req, res) => {
         );
 
         // Get categorization from OpenAI
-        const categorization = await callOpenAIAPI(
+        let categorization = await callOpenAIAPI(
             "gpt-5-mini",
             `${CATEGORISE_TODO_PROMPT}\n\nTranscription:\n${transcription ?? ''}`
         );
+        
+        try {
+            categorization = JSON.parse(categorization || "");   
+        } catch (error) {
+            console.error("Invalid categorization", error);
+            return res.status(400).json({
+                isError: true,
+                message: "Invalid categorization",
+                error: error
+            })
+        }
+        
+        if (!categorization) {
+            console.error("No todo found", categorization);
+            return res.status(400).json({
+                isError: true,
+                message: "No todo found"
+            })
+        }
 
-        res.json({ transcription, categorization });
+        try{
+            for(const todo of categorization){
+                const isValid = isValidTodo(todo);
+                if (!isValid.isValid) {
+                    console.error("Invalid todo", isValid.error);
+                    return res.status(400).json({
+                        isError: true,
+                        message: isValid.error 
+                    });
+                }
+            }
+        } catch (error) {
+            console.error("Invalid todo", error);
+            return res.status(400).json({
+                isError: true,
+                message: "Invalid todo",
+                error: error
+            })
+        }
+
+        res.status(200).json({
+            isError: false,
+            transcription, 
+            categorization, 
+        });
         
     } catch (error) {
         console.error('transcribe error', error);

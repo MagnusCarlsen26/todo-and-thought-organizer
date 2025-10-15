@@ -1,5 +1,5 @@
 import express from 'express';
-import categorizationRoutes from './src/routes/categorization/transcribe.ts';
+import categorizationRoutes from './src/routes/categorization/transcribe.js';
 import { fileURLToPath } from 'url';
 
 const app = express();

@@ -23,15 +23,9 @@ export async function uploadAudio({ mimeType, base64 }: UploadAudioParams): Prom
         console.log('[uploadAudio] Fetch completed. Status:', resp.status);
 
         const data = await resp.json();
-        console.log('[uploadAudio] Response JSON:', data);
-
-        if (!resp.ok) {
-            console.error('[uploadAudio] Response not OK. Error:', data.error || 'Unknown error');
-            return { ok: false, error: data.error || 'Unknown error' };
-        }
 
         console.log('[uploadAudio] Upload and processing successful.');
-        return { ok: true, ...data };
+        return data;
     } catch (error) {
         console.error('[uploadAudio] Exception caught:', error);
         return { ok: false, error: error instanceof Error ? error.message : String(error) };
