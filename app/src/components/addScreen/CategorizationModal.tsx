@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useReducer } from 'react';
-import { View, Text, Modal, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, Modal, TextInput, TouchableOpacity, Pressable } from 'react-native';
 
 import { ValidTodo } from '../../constants/todo.type';
 import { getReminderText } from '../../utils/addScreen/getReminder';
@@ -25,12 +25,14 @@ type CategorizationModalProps = {
   visible: boolean;
   onClose: () => void;
   categorizationResult: ValidTodo[];
+  closeOnBackdropPress?: boolean;
 };
 
 export default function CategorizationModal({ 
   visible, 
   onClose, 
   categorizationResult, 
+  closeOnBackdropPress = false,
 }: CategorizationModalProps) {
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -85,6 +87,13 @@ export default function CategorizationModal({
           }}
           extraScrollHeight={categorizationResult?.length > 1 ? 120 : 240}
         >
+            {closeOnBackdropPress && (
+              <Pressable
+                onPress={onClose}
+                // Fills available space above the bottom sheet to capture backdrop taps
+                style={{ flexGrow: 1, alignSelf: 'stretch' }}
+              />
+            )}
             <View className="bg-slate-950 p-6 rounded-lg shadow-lg border border-gray-500" style={{ width: '100%' }}>
 
                   <View className="flex-row justify-between w-full mt-2 mb-6 gap-2">

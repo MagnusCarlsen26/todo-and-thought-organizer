@@ -125,6 +125,7 @@ export default function ViewTodos() {
           visible={isModalVisible}
           onClose={handleCloseModal}
           categorizationResult={[selectedTodo]}
+          closeOnBackdropPress
         />
       )}
     </View>
