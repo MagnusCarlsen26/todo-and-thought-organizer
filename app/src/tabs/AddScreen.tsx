@@ -1,33 +1,87 @@
-import { Text, View, Pressable, Animated } from 'react-native';
+import { Text, View, Pressable, Animated, Modal } from 'react-native';
 import React, { useState, useEffect, useRef } from 'react';
 
-import Wave from '../components/addScreen/Wave';
 import { COLOR_TRANSITION } from '../assets/themes/addScreenThemes';
 import { stateConfig } from '../constants/addScreen/stateConfig';
-import StateTransitionButtons from '../components/addScreen/stateTransitionButtons';
-import { uploadAudio } from '../utils/uploadAudio';
 import { useAudioRecorder } from '../hooks/useAudioRecorder';
-import { getServerBaseUrl } from '../utils/env';
+import { formatTime } from '../utils/addScreen/formatTime';
+import { handleStateChangeLogic } from '../utils/addScreen/handleStateChange';
+import { ValidTodo } from '../constants/todo.type';
+
+import Wave from '../components/addScreen/Wave';
+import LoadingBar from '../components/addScreen/loadingBar';
+import StateTransitionButtons from '../components/addScreen/stateTransitionButtons';
+import CategorizationModal from '../components/addScreen/CategorizationModal';
 
 export type ScreenStates = "idle"
     | "recording"
     | "paused"
     | "processing"
 
-export default function ViewTodos() {
+export default function AddScreen() {
     
     const [currState, setCurrState] = useState<ScreenStates>("idle");
     const [colorIndex, setColorIndex] = useState(0);
     const scaleAnim = useRef(new Animated.Value(1)).current;
+    
+    const progressAnim = useRef(new Animated.Value(0)).current;
+    const [progressBarWidth, setProgressBarWidth] = useState(0);
+    
+    const [showCategorizationModal, setShowCategorizationModal] = useState(false);
+    const [categorizationResult, setCategorizationResult] = useState<ValidTodo[] | null>([
+        {
+            "todo": {
+                "heading": "Buy pencil cell",
+                "description": "Remind me to buy pencil cell tomorrow."
+            },
+            "category": {
+                "category": "Shopping",
+                "subcategory": "Offline Shopping"
+            },
+            "reminder": {
+                "date": {
+                    "year": 2025,
+                    "month": 10,
+                    "day": 16
+                },
+                "time": {
+                    "hour": null,
+                    "minute": null
+                },
+                "snooze": {
+                    "snoozeHours": null
+                }
+            }
+        },
+        // {
+        //     "todo": {
+        //         "heading": "Go for a walk",
+        //         "description": "I also have to go for a walk tomorrow."
+        //     },
+        //     "category": {
+        //         "category": "other",
+        //         "subcategory": "other"
+        //     },
+        //     "reminder": {
+        //         "date": {
+        //             "year": 2025,
+        //             "month": 10,
+        //             "day": 16
+        //         },
+        //         "time": {
+        //             "hour": null,
+        //             "minute": null
+        //         },
+        //         "snooze": {
+        //             "snoozeHours": null
+        //         }
+        //     }
+        // }
+    ]
+    );
+    
     const firstRender = useRef(true);
     const { start, pause, resume, cancel, stopAndGetBase64, elapsedSeconds } = useAudioRecorder();
-    const serverBaseUrl = getServerBaseUrl();
-
-    const formatTime = (totalSeconds: number) => {
-        const minutes = Math.floor(totalSeconds / 60);
-        const seconds = totalSeconds % 60;
-        return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    };
 
     useEffect(() => {
         if (firstRender.current) {
@@ -57,45 +111,30 @@ export default function ViewTodos() {
     }, [currState]);
 
     const handleStateChange = (newState: ScreenStates) => {
-        void (async () => {
-            if ((currState === 'idle') && newState === 'recording') {
-                const ok = await start();
-                if (ok) {
-                    setCurrState('recording');
-                }
-                return;
-            }
+        handleStateChangeLogic({
+            newState,
+            currState,
+            setCurrState,
+            progressAnim,
+            start,
+            pause,
+            resume,
+            cancel,
+            stopAndGetBase64,
+            setShowCategorizationModal,
+            setCategorizationResult,
+        });
+    };
 
-            if ((currState === 'recording') && newState === 'paused') {
-                await pause();
-                setCurrState('paused');
-                return;
-            }
+    const handleCloseModal = () => {
+        setShowCategorizationModal(false);
+        setCategorizationResult(null);
+    };
 
-            if ((currState === 'paused') && newState === 'recording') {
-                await resume();
-                setCurrState('recording');
-                return;
-            }
-
-            if ((currState === 'recording' || currState === 'paused') && newState === 'processing') {
-                setCurrState('processing');
-                try {
-                    const { base64, filename, mimeType } = await stopAndGetBase64();
-                    await uploadAudio({ serverBaseUrl, filename, mimeType, base64 });
-                } catch {}
-                setCurrState('idle');
-                return;
-            }
-
-            if ((currState === 'recording' || currState === 'paused') && newState === 'idle') {
-                await cancel();
-                setCurrState('idle');
-                return;
-            }
-
-            setCurrState(newState);
-        })();
+    const handleSaveCategorization = () => {
+        // Here you would typically save the categorized todo to your storage/state
+        console.log('Saving categorized todo:', categorizationResult);
+        handleCloseModal();
     };
 
     return (
@@ -113,41 +152,55 @@ export default function ViewTodos() {
                             handleStateChange(stateConfig[currState].onClickTransition);
                         }
                     }}
-                    className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 border-4 border-gray-200 w-64 aspect-square justify-center items-center rounded-full transition-all duration-300"
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 border-4 border-gray-200 aspect-square justify-center items-center rounded-full transition-all duration-300"
                     style={{
                         borderColor: COLOR_TRANSITION[colorIndex],
                     }}
                 >
 
                     {stateConfig[currState].waveAnimationState === "running" || stateConfig[currState].waveAnimationState === "still" ? (
-                        <View className="grid grid-rows-[2fr_1fr]">
-                            <View className="flex justify-center items-center">
+                        <View className="flex flex-col">
+                            <View className="h-1/2 flex justify-end items-center">
                                 <Wave animationState={stateConfig[currState].waveAnimationState} />
                             </View>
-                            <View className="flex justify-start items-center">
-                                <Text className="text-white font-bold text-2xl text-center">
+                            <View className="h-1/3 flex justify-center items-center">
+                                <Text className="text-white font-bold text-lg text-center">
                                     {stateConfig[currState].mainButtonText}
                                 </Text>
                                 {(currState === 'recording' || currState === 'paused') && (
-                                    <Text className="text-white font-bold text-lg">
+                                    <Text className="text-white font-bold text-base">
                                         {formatTime(elapsedSeconds)}
                                     </Text>
                                 )}
                             </View>
                         </View>
                     ) : (
-                        <View className="flex justify-center items-center">
-                            <Text className="text-white font-bold text-2xl">
-                                {stateConfig[currState].mainButtonText}
-                            </Text>
-                            
-                                {(currState === 'recording' || currState === 'paused') && (
-                                    <Text className="text-white font-bold text-xl">
-                                        {formatTime(elapsedSeconds)}
-                                    </Text>
-                                )
-                            }
-                        </View>
+                        currState === 'processing' ? (
+                            <View className="flex justify-center items-center w-full">
+                                <Text className="text-white font-bold text-2xl">
+                                    {stateConfig[currState].mainButtonText}
+                                </Text>
+                                <LoadingBar 
+                                    progress={progressAnim}
+                                    widthPx={progressBarWidth}
+                                    tintColor={COLOR_TRANSITION[colorIndex]}
+                                    onMeasuredWidth={(w) => setProgressBarWidth(w)}
+                                />
+                            </View>
+                        ) : (
+                            <View className="flex justify-center items-center">
+                                <Text className="text-white font-bold text-2xl">
+                                    {stateConfig[currState].mainButtonText}
+                                </Text>
+                                
+                                    {(currState === 'recording' || currState === 'paused') && (
+                                        <Text className="text-white font-bold text-xl">
+                                            {formatTime(elapsedSeconds)}
+                                        </Text>
+                                    )
+                                }
+                            </View>
+                        )
 
                     )}
 
@@ -161,6 +214,14 @@ export default function ViewTodos() {
                     handleStateChange={handleStateChange} 
                 />
             </View>
+
+            <CategorizationModal
+                visible={true}
+                // visible={showCategorizationModal}
+                categorizationResult={categorizationResult ?? []}
+                onClose={handleCloseModal}
+                onSave={handleSaveCategorization}
+            />
 
         </View>
     );

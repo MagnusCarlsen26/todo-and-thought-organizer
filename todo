@@ -2,3 +2,10 @@
     - UI
         - Fake audio wave in /add screen.
         - Loading bar in /add screen when voice is sent
+    - Features
+        - Customize categories
+        - User constants like - office going timings
+        - adjust date according to timezone
+    - Server
+        - maintain a db for usage.
+        - GPT can handle both voice to text and categorization

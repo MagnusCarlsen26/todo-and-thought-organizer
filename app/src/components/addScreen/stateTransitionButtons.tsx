@@ -14,7 +14,7 @@ export default function StateTransitionButtons({
     const buttons = stateConfig[currState].transitionButtons;
 
     return (
-        <View className='flex-column gap-1 w-full mt-16'>
+        <View className='flex-column gap-1 w-full mt-16 mb-4'>
 
             {buttons[0] && (
                 <StateTransitionButton 
@@ -25,7 +25,7 @@ export default function StateTransitionButtons({
                 />
             )}
 
-            <View className="grid grid-cols-2 gap-1">
+            <View className="flex flex-row gap-1">
                 {buttons.slice(1).map((button) => (
                     <StateTransitionButton 
                         key={button.buttonText} 
@@ -58,7 +58,7 @@ function StateTransitionButton({
     return (
         <Pressable 
             onPress={() => handleStateChange(buttonConfig.onClickTransition)}
-            className={`${buttonConfig.bgColor} ${isFirst ? 'py-8' : 'py-4'} border-2 rounded-3xl`}
+            className={`${buttonConfig.bgColor} ${isFirst ? 'py-8' : ' w-1/2 py-4'} border-2 rounded-3xl`}
         >
             <Text className="text-white text-center font-bold text-2xl">
                 {buttonConfig.buttonText}
