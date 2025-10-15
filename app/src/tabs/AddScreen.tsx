@@ -1,4 +1,4 @@
-import { Text, View, Pressable, Animated } from 'react-native';
+import { Text, View, Pressable, Animated, Modal } from 'react-native';
 import React, { useState, useEffect, useRef } from 'react';
 
 import { COLOR_TRANSITION } from '../assets/themes/addScreenThemes';
@@ -6,10 +6,12 @@ import { stateConfig } from '../constants/addScreen/stateConfig';
 import { useAudioRecorder } from '../hooks/useAudioRecorder';
 import { formatTime } from '../utils/addScreen/formatTime';
 import { handleStateChangeLogic } from '../utils/addScreen/handleStateChange';
+import { ValidTodo } from '../constants/todo.type';
 
 import Wave from '../components/addScreen/Wave';
 import LoadingBar from '../components/addScreen/loadingBar';
 import StateTransitionButtons from '../components/addScreen/stateTransitionButtons';
+import CategorizationModal from '../components/addScreen/CategorizationModal';
 
 export type ScreenStates = "idle"
     | "recording"
@@ -24,6 +26,9 @@ export default function AddScreen() {
     
     const progressAnim = useRef(new Animated.Value(0)).current;
     const [progressBarWidth, setProgressBarWidth] = useState(0);
+    
+    const [showCategorizationModal, setShowCategorizationModal] = useState(false);
+    const [categorizationResult, setCategorizationResult] = useState<ValidTodo[] | null>(null);
     
     const firstRender = useRef(true);
     const { start, pause, resume, cancel, stopAndGetBase64, elapsedSeconds } = useAudioRecorder();
@@ -66,7 +71,20 @@ export default function AddScreen() {
             resume,
             cancel,
             stopAndGetBase64,
+            setShowCategorizationModal,
+            setCategorizationResult,
         });
+    };
+
+    const handleCloseModal = () => {
+        setShowCategorizationModal(false);
+        setCategorizationResult(null);
+    };
+
+    const handleSaveCategorization = () => {
+        // Here you would typically save the categorized todo to your storage/state
+        console.log('Saving categorized todo:', categorizationResult);
+        handleCloseModal();
     };
 
     return (
@@ -146,6 +164,13 @@ export default function AddScreen() {
                     handleStateChange={handleStateChange} 
                 />
             </View>
+
+            <CategorizationModal
+                visible={showCategorizationModal}
+                categorizationResult={categorizationResult ?? []}
+                onClose={handleCloseModal}
+                onSave={handleSaveCategorization}
+            />
 
         </View>
     );

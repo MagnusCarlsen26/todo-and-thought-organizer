@@ -1,16 +1,11 @@
+import { ValidTodo } from "../constants/todo.type";
+
 export type UploadAudioParams = {
     mimeType: string; // e.g. 'audio/m4a' or 'audio/wav'
     base64: string;   // raw base64 string without data: prefix
 };
 
-export type UploadAudioResponse = {
-    ok: boolean;
-    transcription?: string;
-    categorization?: any;
-    error?: string;
-};
-
-export async function uploadAudio({ mimeType, base64 }: UploadAudioParams): Promise<UploadAudioResponse> {
+export async function uploadAudio({ mimeType, base64 }: UploadAudioParams): Promise<ValidTodo[] | null> {
     const url = 'http://192.168.1.17:3000/categorization/transcribeAndCategorize';
 
     try {
@@ -24,10 +19,9 @@ export async function uploadAudio({ mimeType, base64 }: UploadAudioParams): Prom
 
         const data = await resp.json();
 
-        console.log('[uploadAudio] Upload and processing successful.');
-        return data;
+        return JSON.parse(data.categorization) as ValidTodo[];
     } catch (error) {
         console.error('[uploadAudio] Exception caught:', error);
-        return { ok: false, error: error instanceof Error ? error.message : String(error) };
+        return null;
     }
 }

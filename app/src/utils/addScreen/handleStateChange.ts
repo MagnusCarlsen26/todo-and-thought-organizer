@@ -1,6 +1,7 @@
 import { Animated, Easing } from 'react-native';
 import { ScreenStates } from '../../tabs/AddScreen';
 import { uploadAudio } from '../uploadAudio';
+import { ValidTodo } from '../../constants/todo.type';
 
 type HandleStateChangeParams = {
     newState: ScreenStates;
@@ -12,6 +13,8 @@ type HandleStateChangeParams = {
     resume: () => Promise<void>;
     cancel: () => Promise<void>;
     stopAndGetBase64: () => Promise<{ base64: string; mimeType: string; }>;
+    setShowCategorizationModal: (show: boolean) => void;
+    setCategorizationResult: (result: ValidTodo[] | null) => void;
 };
 
 export const handleStateChangeLogic = ({
@@ -24,6 +27,8 @@ export const handleStateChangeLogic = ({
     resume,
     cancel,
     stopAndGetBase64,
+    setShowCategorizationModal,
+    setCategorizationResult,
 }: HandleStateChangeParams) => {
     void (async () => {
         if ((currState === 'idle') && newState === 'recording') {
@@ -78,7 +83,9 @@ export const handleStateChangeLogic = ({
                     }).start(() => resolve());
                 });
 
-                console.log('Upload result:', result);
+                setCategorizationResult(result);
+                setShowCategorizationModal(true);
+
             } catch (error) {
                 console.error('Upload failed:', error);
             } finally {
