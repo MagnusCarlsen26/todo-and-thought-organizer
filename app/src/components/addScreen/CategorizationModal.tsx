@@ -5,7 +5,7 @@ import CalendarSvg from '../../assets/svgs/calenderSvg';
 import ClockSvg from '../../assets/svgs/clockSvg';
 import SnoozeSvg from '../../assets/svgs/snoozeSvg';
 import { getReminderText } from '../../utils/addScreen/getReminder';
-import { reducer, initialState } from '../../utils/addScreen/reducer';
+import { reducer } from '../../utils/editTodoReducer';
 import EditCalender from '../editTodo/editCalender';
 import EditTime from '../editTodo/editTime';
 import EditSnooze from '../editTodo/editSnooze';
@@ -24,19 +24,15 @@ export default function CategorizationModal({
   onSave 
 }: CategorizationModalProps) {
   
-  console.log('categorizationResult', categorizationResult);
-
-  const [editedCategorization, setEditedCategorization] = useState<ValidTodo[]>(categorizationResult);
+  const [editedCategorization, setEditedCategorization] = useState<ValidTodo[]>(categorizationResult || []);
+  function dispatch(action: any) {}
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const [showCalendar, setShowCalendar] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [showSnoozePicker, setShowSnoozePicker] = useState(false);
 
-  const [state, dispatch] = useReducer(reducer, initialState);
-
-
-  console.log('visible', visible);
+  console.log('editedCategorization', categorizationResult);
 
   useEffect(() => {
     
@@ -47,7 +43,7 @@ export default function CategorizationModal({
 
   console.log('editedCategorization', editedCategorization);
     
-  if (editedCategorization.length === 0) {
+  if ( editedCategorization && editedCategorization.length === 0) {
     console.log('editedCategorization is null');
     return null;
   }
@@ -106,16 +102,22 @@ export default function CategorizationModal({
         <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
           <View className="bg-gray-800 p-6 rounded-lg shadow-lg" style={{ width: '90%' }}>
 
-            <Text
-              className="text-white text-3xl font-semibold text-center border-b border-gray-300 mb-2"
-            >
-              {editedCategorization[currentIndex].todo.heading}
-            </Text>
+                <TextInput
+                  className="flex-1 text-white text-center text-3xl font-semibold p-2 border-b border-gray-300 mb-2"
+                  value={editedCategorization[currentIndex].todo.heading}
+                  onChangeText={text => dispatch({ type: "heading", payload: text })}
+                  placeholder="No heading"
+                  multiline
+                />
 
-            {/* Description */}
-            <Text className="text-gray-400 mb-4">
-              {editedCategorization[currentIndex].todo.description}
-            </Text>
+                {/* Description */}
+                <TextInput
+                    className="flex-1 text-gray-400 p-2"
+                    value={editedCategorization[currentIndex].todo.description}
+                    onChangeText={text => dispatch({ type: "description", payload: text })}
+                    placeholder="No description"
+                    multiline
+                />
 
             <View className="flex-row justify-around w-full mb-4 gap-2">
                 <TouchableOpacity

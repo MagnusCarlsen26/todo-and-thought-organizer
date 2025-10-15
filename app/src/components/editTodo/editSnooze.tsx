@@ -24,7 +24,7 @@ export default function EditSnooze({
                     {preset.map((item, index) => (
                         <TouchableOpacity 
                             key={index}
-                            className="border border-gray-300 rounded-md px-4 py-1"
+                            className="border border-gray-500 rounded-md px-4 py-1"
                             onPress={() => {
                                 dispatch({ 
                                     type: "snoozeHours", 
@@ -33,7 +33,7 @@ export default function EditSnooze({
                                 setShowSnoozePicker(false)
                             }}
                         >
-                            <Text>{item.label}</Text>
+                            <Text className="text-gray-200">{item.label}</Text>
                         </TouchableOpacity>
                     ))}
                 </View>

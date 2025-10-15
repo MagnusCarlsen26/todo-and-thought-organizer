@@ -2,6 +2,7 @@
     - UI
         - Fake audio wave in /add screen.
         - Loading bar in /add screen when voice is sent
+        - Dark theme in set time picker in edit todo
     - Features
         - Customize categories
         - User constants like - office going timings

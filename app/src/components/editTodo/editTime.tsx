@@ -23,6 +23,7 @@ export default function EditTime({
             mode="time"
             is24Hour={false}
             display="spinner"
+            themeVariant="dark"
             onChange={(event, selectedTime) => {
                 setShowTimePicker(false);
                 if (selectedTime) {
