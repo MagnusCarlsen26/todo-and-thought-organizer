@@ -1,4 +1,4 @@
-import { Text, View, Pressable, Animated, Modal } from 'react-native';
+import { Text, View, Pressable, Animated } from 'react-native';
 import React, { useState, useEffect, useRef } from 'react';
 
 import { COLOR_TRANSITION } from '../assets/themes/addScreenThemes';
@@ -83,21 +83,33 @@ export default function AddScreen() {
     };
 
     const handleSaveCategorizedTodos = async (editedTodos: ValidTodo[]) => {
+        console.log('handleSaveCategorizedTodos called with editedTodos:', editedTodos);
+
         const existingTodos = await getSavedTodos();
+        console.log('Fetched existingTodos:', existingTodos);
+
         const headingToIndex: Record<string, number> = {};
-        existingTodos.forEach((t, idx) => { headingToIndex[t.todo.heading] = idx; });
+        existingTodos.forEach((t, idx) => {
+            headingToIndex[t.todo.heading] = idx;
+        });
+        console.log('headingToIndex map:', headingToIndex);
 
         const nextTodos = [...existingTodos];
         for (const edited of editedTodos) {
             const matchIndex = headingToIndex[edited.todo.heading];
             if (typeof matchIndex === 'number') {
+                console.log(`Replacing todo at index ${matchIndex} with`, edited);
                 nextTodos[matchIndex] = edited;
             } else {
+                console.log(`Adding new todo:`, edited);
                 nextTodos.push(edited);
             }
         }
 
+        console.log('Saving nextTodos:', nextTodos);
         await storeTodosIOService(nextTodos);
+
+        console.log('Closing Categorization Modal and clearing result');
         setShowCategorizationModal(false);
         setCategorizationResult(null);
     };

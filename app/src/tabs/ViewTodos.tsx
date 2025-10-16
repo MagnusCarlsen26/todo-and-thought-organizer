@@ -7,20 +7,27 @@ import { ValidTodo } from '../constants/todo.type';
 import { DARK_COLORS } from '../constants/categoryPalette';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { getSavedTodos, storeTodosIOService } from '../service/todoIOService';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 
 export default function ViewTodos() {
 
   const [todos, setTodos] = useState<ValidTodo[]>([]);
   
-  const fetchTodos = async () => {
-    const latestTodos = await getSavedTodos();
-    setTodos(latestTodos);
-  };
 
-  useEffect(() => {
-    fetchTodos();
-  }, []);
-
+  useFocusEffect(
+    useCallback(() => {
+      const fetchTodos = async () => {
+        const latestTodos = await getSavedTodos();
+        setTodos(latestTodos);
+      };
+  
+      fetchTodos();
+  
+      // Optional cleanup function (for safety)
+      return () => {};
+    }, [])
+  );
   const dateCategorizedTodos = dateCategorizeTodos(todos);
 
   const [isModalVisible, setIsModalVisible] = useState(false);

@@ -47,7 +47,7 @@ This shoud be your exact output.
     {
         "todo" : {
             "heading" : string, // A short heading max 5 words
-            "description" : string // All other details user has mentioned
+            "description" : string // All other details user has mentioned ( stick to the description. remove unnecessary words)
         },
         "category" : {
             "category" : string,
