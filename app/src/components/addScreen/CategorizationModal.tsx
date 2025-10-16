@@ -179,8 +179,8 @@ export default function CategorizationModal({
                 <LeftButtons goToPrevious={() => goToPrevious(hasPrevious, currentIndex, setCurrentIndex)} disabled={currentIndex === 0} />
                 <View className="flex-1 items-center justify-center">
                   <Text className="text-gray-400">{currentIndex + 1} / {editedCategorization.length}</Text>
-                <RightButtons goToNext={() => goToNext(hasNext, currentIndex, setCurrentIndex)} disabled={currentIndex === editedCategorization.length - 1} />
                 </View>
+                <RightButtons goToNext={() => goToNext(hasNext, currentIndex, setCurrentIndex)} disabled={currentIndex === editedCategorization.length - 1} />
               </View>}
 
             </View>
