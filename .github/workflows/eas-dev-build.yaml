@@ -39,6 +39,6 @@ jobs:
         run: eas build --platform android --profile dev --non-interactive --wait
         working-directory: ./app
 
-      - name: iOS dev (Simulator)
-        run: eas build --platform ios --profile dev --non-interactive --wait
-        working-directory: ./app
+      # - name: iOS dev (Simulator)
+      #   run: eas build --platform ios --profile dev --non-interactive --wait
+      #   working-directory: ./app
