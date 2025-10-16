@@ -2,34 +2,28 @@ import 'react-native-gesture-handler';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { DarkTheme, NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { View } from 'react-native';
 import ViewTodos from './src/tabs/ViewTodos';
 import AddScreen from './src/tabs/AddScreen';
 import ViewNotes from './src/tabs/ViewNotes';
-
+import requestNotificationPermission from './src/utils/permissions/notificationPermission';
 import { AddIcon, TodosIcon, NotesIcon } from './src/assets/svgs/navSvgs';
 import { StatusBar } from 'expo-status-bar';
+import { useEffect } from 'react';
 
 const Tab = createBottomTabNavigator();
 
 export default function App() {
-  return (
+
+    useEffect(() => {
+      requestNotificationPermission();
+    }, []);
+
+    return (
     <GestureHandlerRootView className="flex-1 bg-slate-950">
       <NavigationContainer theme={DarkTheme}>
         <StatusBar style="light" backgroundColor="#0b0f16" />
         <Tab.Navigator 
-          screenOptions={{ 
-            headerShown: false,
-            tabBarActiveTintColor: '#93c5fd',
-            tabBarInactiveTintColor: '#6b7280',
-            tabBarStyle: {
-              backgroundColor: '#0b0f16',
-              borderTopColor: '#111827'
-            },
-            tabBarLabelStyle: {
-              fontSize: 12
-            }
-          }}
+          screenOptions={screenOptions}
           initialRouteName="Todos"
         >
         <Tab.Screen
@@ -58,4 +52,17 @@ export default function App() {
       </NavigationContainer>
     </GestureHandlerRootView>
   );
+}
+
+const screenOptions = {
+  headerShown: false,
+  tabBarActiveTintColor: '#93c5fd',
+  tabBarInactiveTintColor: '#6b7280',
+  tabBarStyle: {
+    backgroundColor: '#0b0f16',
+    borderTopColor: '#111827'
+  },
+  tabBarLabelStyle: {
+    fontSize: 12
+  }
 }

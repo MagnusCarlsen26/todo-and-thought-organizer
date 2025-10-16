@@ -7,12 +7,13 @@ import { useAudioRecorder } from '../hooks/useAudioRecorder';
 import { formatTime } from '../utils/addScreen/formatTime';
 import { handleStateChangeLogic } from '../utils/addScreen/handleStateChange';
 import { ValidTodo } from '../constants/todo.type';
+import { getSavedTodos, storeTodosIOService } from '../service/todoIOService';
+import { setTodoNotificationId } from '../utils/addScreen/setTodoNotificationId';
 
 import Wave from '../components/addScreen/Wave';
 import LoadingBar from '../components/addScreen/loadingBar';
 import StateTransitionButtons from '../components/addScreen/stateTransitionButtons';
 import CategorizationModal from '../components/addScreen/CategorizationModal';
-import { getSavedTodos, storeTodosIOService } from '../service/todoIOService';
 
 export type ScreenStates = "idle"
     | "recording"
@@ -83,33 +84,26 @@ export default function AddScreen() {
     };
 
     const handleSaveCategorizedTodos = async (editedTodos: ValidTodo[]) => {
-        console.log('handleSaveCategorizedTodos called with editedTodos:', editedTodos);
 
         const existingTodos = await getSavedTodos();
-        console.log('Fetched existingTodos:', existingTodos);
 
         const headingToIndex: Record<string, number> = {};
         existingTodos.forEach((t, idx) => {
             headingToIndex[t.todo.heading] = idx;
         });
-        console.log('headingToIndex map:', headingToIndex);
 
         const nextTodos = [...existingTodos];
         for (const edited of editedTodos) {
             const matchIndex = headingToIndex[edited.todo.heading];
             if (typeof matchIndex === 'number') {
-                console.log(`Replacing todo at index ${matchIndex} with`, edited);
-                nextTodos[matchIndex] = edited;
+                nextTodos[matchIndex] = await setTodoNotificationId(edited);
             } else {
-                console.log(`Adding new todo:`, edited);
-                nextTodos.push(edited);
+                nextTodos.push(await setTodoNotificationId(edited));
             }
         }
 
-        console.log('Saving nextTodos:', nextTodos);
         await storeTodosIOService(nextTodos);
 
-        console.log('Closing Categorization Modal and clearing result');
         setShowCategorizationModal(false);
         setCategorizationResult(null);
     };

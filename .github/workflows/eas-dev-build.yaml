@@ -30,12 +30,14 @@ jobs:
         steps:
             - name: Checkout
               uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
 
             - id: check
               name: Check if native/config files changed
               run: |
                     # Detect which files changed in this commit range
-                    CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} 2>/dev/null || git diff --name-only HEAD~1 HEAD)
+                    CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} 2>/dev/null || echo "app/")
                     echo "Changed files:"
                     echo "$CHANGED"
 
