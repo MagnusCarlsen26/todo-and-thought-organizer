@@ -1,6 +1,7 @@
 name: EAS Prod Build (main)
 
 on:
+  workflow_dispatch:
   push:
     branches: [ main ]
     paths:
@@ -29,8 +30,7 @@ jobs:
           cache-dependency-path: app/package-lock.json
 
       - name: Install deps
-CI changes - sepearing dev and prod changes
-
+        # CI changes - separating dev and prod changes
         run: npm install
         working-directory: ./app
 

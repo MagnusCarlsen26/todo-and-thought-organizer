@@ -1,6 +1,7 @@
 name: EAS Dev Build (stage)
 
 on:
+  workflow_dispatch:
   push:
     branches: [ stage ]
     paths:
