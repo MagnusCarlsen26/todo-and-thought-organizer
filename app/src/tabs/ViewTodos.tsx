@@ -6,67 +6,15 @@ import CategorizationModal from '../components/addScreen/CategorizationModal';
 import { ValidTodo } from '../constants/todo.type';
 import { DARK_COLORS } from '../constants/categoryPalette';
 import { SafeAreaView } from 'react-native-safe-area-context';
-// import { getTodosAsyncStorage } from '../service/asyncStorageService';
+import { getSavedTodos, storeTodosIOService } from '../service/todoIOService';
 
 export default function ViewTodos() {
 
-  const [todos, setTodos] = useState<ValidTodo[]>([
-    {
-      "todo": {
-          "heading": "Go for a walk",
-          "description": "I also have to go for a walk tomorrow."
-      },
-      "category": {
-        "category": "Shopping",
-        "subcategory": "Offline Shopping"
-    },
-      "reminder": {
-          "date": {
-              "year": 2025,
-              "month": 10,
-              "day": 16
-          },
-          "time": {
-              "hour": 12,
-              "minute": 30
-          },
-          "snooze": {
-              "snoozeHours": 60
-          }
-      }
-    },
-    {
-        "todo": {
-            "heading": "Buy pencil cell",
-            "description": "Remind me to buy pencil cell tomorrow."
-        },
-        "category": {
-            "category": "Shopping",
-            "subcategory": "Offline Shopping"
-        },
-        "reminder": {
-            "date": {
-                "year": 2025,
-                "month": 10,
-                "day": 16
-            },
-            "time": {
-                "hour": 8,
-                "minute": 0
-            },
-            "snooze": {
-                "snoozeHours": 1
-            }
-        }
-    },
-
-]);
+  const [todos, setTodos] = useState<ValidTodo[]>([]);
   
   const fetchTodos = async () => {
-    console.log("fetching todos");
-    // const latestTodos = await getTodosAsyncStorage();
-    // console.log("Latest todos:", latestTodos);
-    // setTodos(latestTodos);
+    const latestTodos = await getSavedTodos();
+    setTodos(latestTodos);
   };
 
   useEffect(() => {
@@ -90,8 +38,22 @@ export default function ViewTodos() {
 
   const handleDeleteTodo = async (todo: ValidTodo) => {
     const updatedTodos = todos.filter(item => item.todo.heading !== todo.todo.heading);
-    // await storeTodos(updatedTodos);
+    await storeTodosIOService(updatedTodos);
     setTodos(updatedTodos);
+  };
+
+  const handlePersistEdits = async (editedTodos: ValidTodo[]) => {
+    // Replace by heading key; if heading is edited, we match by previous selectedTodo heading
+    const previousHeading = selectedTodo?.todo.heading;
+    const originalIndex = todos.findIndex(t => t.todo.heading === previousHeading);
+    let nextTodos = [...todos];
+    if (originalIndex !== -1) {
+      // If multiple edited items come in, replace the one corresponding to the opened item
+      const editedForThis = editedTodos[0] ?? selectedTodo;
+      nextTodos[originalIndex] = editedForThis as ValidTodo;
+    }
+    await storeTodosIOService(nextTodos);
+    setTodos(nextTodos);
   };
 
   const handleMarkAsComplete = async (todo: ValidTodo) => {
@@ -133,6 +95,8 @@ export default function ViewTodos() {
           onClose={handleCloseModal}
           categorizationResult={[selectedTodo]}
           closeOnBackdropPress
+          onSave={handlePersistEdits}
+          onDelete={handleDeleteTodo}
         />
       )}
     </SafeAreaView>

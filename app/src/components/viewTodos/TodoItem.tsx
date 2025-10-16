@@ -29,10 +29,10 @@ export default function TodoItem({ item, onEdit }: TodoItemProps) {
     >
       <TouchableOpacity onPress={() => onEdit(item)}>
         <View>
-          <Text className='text-xl font-bold' style={{ color: DARK_COLORS.title }}>
+          <Text className='text-xl font-bold mb-2' style={{ color: DARK_COLORS.title }}>
             {item.todo.heading}
           </Text>
-          <Text style={{ color: DARK_COLORS.description }}>
+          <Text className='text-gray-500'>
             {item.todo.description}
           </Text>
         </View>
@@ -49,7 +49,7 @@ export default function TodoItem({ item, onEdit }: TodoItemProps) {
             marginTop: 8,
           }}
         >
-          <Text style={{ color: theme.tagText, fontWeight: '600' }}>
+          <Text style={{ color: theme.tagText, fontWeight: '600' }} className='text-sm'>
             {item.category.subcategory}
           </Text>
         </View>
