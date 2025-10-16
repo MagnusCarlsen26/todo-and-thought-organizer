@@ -6,6 +6,7 @@
             [x] Dark theme in set time picker in edit todo
             - set time is showing 17:47 PM (urgent)
             - typography everywhere
+            - in categorization modal, when user clicks on save all todos are saved and when clicks on delete, all todos are deleted.
         - view todos screen
             - edit modal should close when tapped outside
 
@@ -21,6 +22,10 @@
         - adding urgency tag
         - today's todo view
         - time categories - this week , this month .. are incorrectly mapped (urgent)
+        - mark as complete and delete options in view todos screen
+        - optimize the appp - make it faster.
     - Server
         - maintain a db for usage.
         - GPT can handle both voice to text and categorization
+    - 
+        - change stage ci/cd and main ci/cd to .apk
