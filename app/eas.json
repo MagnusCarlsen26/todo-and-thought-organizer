@@ -5,21 +5,30 @@
         "developmentClient": true,
         "android": { "buildType": "apk" },
         "ios": { "simulator": true },
-        "credentialsSource": "remote"
+        "credentialsSource": "remote",
+        "env": {
+          "ENVFILE": ".env.development"
+        }
       },
       "stage": {
         "developmentClient": true,
         "distribution": "internal",
         "android": { "buildType": "apk" },
         "ios": { "simulator": true },
-        "credentialsSource": "remote"
+        "credentialsSource": "remote",
+        "env": {
+          "ENVFILE": ".env.development"
+        }
       },
       "production": {
         "developmentClient": false,
         "autoIncrement": true,
         "distribution": "internal",
         "android": { "buildType": "apk" },
-        "credentialsSource": "remote"
+        "credentialsSource": "remote",
+        "env": {
+          "ENVFILE": ".env.production"
+        }
       }
     }
 }  

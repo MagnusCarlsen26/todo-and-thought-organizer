@@ -14,6 +14,9 @@ jobs:
   build-prod:
     runs-on: ubuntu-latest
 
+    env:
+      EXPO_PUBLIC_SERVER_URL: ${{ secrets.EXPO_PUBLIC_SERVER_URL_PROD }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,7 +29,9 @@ jobs:
           cache-dependency-path: app/package-lock.json
 
       - name: Install deps
-        run: npm ci
+CI changes - sepearing dev and prod changes
+
+        run: npm install
         working-directory: ./app
 
       - name: Auth & Setup EAS
@@ -34,6 +39,10 @@ jobs:
         with:
           eas-version: latest
           token: ${{ secrets.EAS_TOKEN }}
+
+      - name: Sync EAS secret EXPO_PUBLIC_SERVER_URL
+        run: eas secret:create --type string --name EXPO_PUBLIC_SERVER_URL --value "$EXPO_PUBLIC_SERVER_URL" --scope project --non-interactive --force
+        working-directory: ./app
 
       - name: Android prod APK
         run: eas build --platform android --profile production --non-interactive --wait

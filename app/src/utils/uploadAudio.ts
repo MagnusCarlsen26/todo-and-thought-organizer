@@ -1,4 +1,5 @@
 import { ValidTodo } from "../constants/todo.type";
+import { SERVER_URL } from "../constants/apiUrl";
 
 export type UploadAudioParams = {
     mimeType: string; // e.g. 'audio/m4a' or 'audio/wav'
@@ -6,7 +7,7 @@ export type UploadAudioParams = {
 };
 
 export async function uploadAudio({ mimeType, base64 }: UploadAudioParams): Promise<ValidTodo[] | null> {
-    const url = 'http://192.168.1.17:3000/categorization/transcribeAndCategorize';
+    const url = `${SERVER_URL}/categorization/transcribeAndCategorize`;
 
     try {
         console.log('[uploadAudio] Sending fetch request...');
