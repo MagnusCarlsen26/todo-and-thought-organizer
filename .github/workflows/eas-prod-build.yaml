@@ -1,4 +1,4 @@
-name: EAS Dev Build (main)
+name: EAS Prod Build (main)
 
 on:
   push:
@@ -7,11 +7,11 @@ on:
       - 'app/**'
 
 concurrency:
-  group: eas-dev-${{ github.ref }}
+  group: eas-prod-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  build-dev:
+  build-prod:
     runs-on: ubuntu-latest
 
     steps:
@@ -35,10 +35,10 @@ jobs:
           eas-version: latest
           token: ${{ secrets.EAS_TOKEN }}
 
-      - name: Android dev APK
-        run: eas build --platform android --profile dev --non-interactive --wait
+      - name: Android prod APK
+        run: eas build --platform android --profile production --non-interactive --wait
         working-directory: ./app
 
-      - name: iOS dev (Simulator)
-        run: eas build --platform ios --profile dev --non-interactive --wait
+      - name: iOS prod
+        run: eas build --platform ios --profile production --non-interactive --wait
         working-directory: ./app

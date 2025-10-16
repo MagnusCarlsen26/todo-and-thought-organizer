@@ -13,6 +13,13 @@
         "android": { "buildType": "apk" },
         "ios": { "simulator": true },
         "credentialsSource": "remote"
+      },
+      "production": {
+        "developmentClient": false,
+        "autoIncrement": true,
+        "distribution": "internal",
+        "android": { "buildType": "apk" },
+        "credentialsSource": "remote"
       }
     }
 }  

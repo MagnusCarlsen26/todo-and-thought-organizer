@@ -1,0 +1,44 @@
+name: EAS Dev Build (stage)
+
+on:
+  push:
+    branches: [ stage ]
+    paths:
+      - 'app/**'
+
+concurrency:
+  group: eas-dev-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-dev:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: app/package-lock.json
+
+      - name: Install deps
+        run: npm ci
+        working-directory: ./app
+
+      - name: Auth & Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EAS_TOKEN }}
+
+      - name: Android dev APK
+        run: eas build --platform android --profile dev --non-interactive --wait
+        working-directory: ./app
+
+      - name: iOS dev (Simulator)
+        run: eas build --platform ios --profile dev --non-interactive --wait
+        working-directory: ./app
