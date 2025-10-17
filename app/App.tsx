@@ -39,7 +39,7 @@ export default function App() {
           initialRouteName="Todos"
         >
         <Tab.Screen
-          name="Todos"
+          name="Add"
           component={ViewTodos}
           options={{
             tabBarIcon: ({ color, size }) => <TodosIcon color={color} size={size} />
