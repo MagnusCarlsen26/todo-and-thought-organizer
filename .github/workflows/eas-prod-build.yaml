@@ -6,50 +6,23 @@ on:
             action:
                 description: "Choose action: build or update"
                 required: true
-                default: "auto"
+                default: "update"
                 type: choice
                 options:
-                    - auto
                     - build
                     - update
-    push:
-        branches: [ main ]
-        paths:
-            - 'app/**'
+#    push:
+#        branches: [ main ]
+#        paths:
+#            - 'app/**'
 
 concurrency:
     group: eas-prod-${{ github.ref }}
     cancel-in-progress: true
 
 jobs:
-    decide:
-        runs-on: ubuntu-latest
-        outputs:
-            needs_build: ${{ steps.check.outputs.needs_build }}
-
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
-              with:
-                  fetch-depth: 0
-
-            - id: check
-              name: Check if native/config files changed
-              run: |
-                    CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} 2>/dev/null || echo "app/")
-                    echo "Changed files:"
-                    echo "$CHANGED"
-
-                    echo "needs_build=false" >> $GITHUB_OUTPUT
-
-                    if echo "$CHANGED" | grep -E "android/|ios/|app\.json|package\.json|eas\.json|Podfile|build\.gradle"; then
-                        echo "Native/config changes detected, forcing rebuild."
-                        echo "needs_build=true" >> $GITHUB_OUTPUT
-                    fi
-
     build-or-update:
         runs-on: ubuntu-latest
-        needs: decide
         env:
             EXPO_PUBLIC_SERVER_URL: ${{ secrets.EXPO_PUBLIC_SERVER_URL_PROD }}
 
@@ -83,7 +56,6 @@ jobs:
                     cd app
 
                     echo "Requested action: ${{ github.event.inputs.action }}"
-                    echo "Auto-detected native change: ${{ needs.decide.outputs.needs_build }}"
 
                     if [ "${{ github.event.inputs.action }}" = "build" ]; then
                         echo "Manual override: forcing EAS build..."
@@ -92,12 +64,4 @@ jobs:
                     elif [ "${{ github.event.inputs.action }}" = "update" ]; then
                         echo "Manual override: running OTA update..."
                         eas update --branch production --message "Manual update from GitHub Actions"
-
-                    elif [ "${{ needs.decide.outputs.needs_build }}" = "true" ]; then
-                        echo "Detected native/config changes — running full EAS build..."
-                        eas build --platform android --profile production --non-interactive --wait
-
-                    else
-                        echo "No native/config changes — running OTA update instead."
-                        eas update --branch production --message "Auto OTA update from commit: ${{ github.sha }}"
                     fi
