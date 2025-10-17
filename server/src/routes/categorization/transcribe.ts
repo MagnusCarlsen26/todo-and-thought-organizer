@@ -1,5 +1,4 @@
 import { CATEGORISE_TODO_PROMPT, TRANSCRIBE_AUDIO_PROMPT } from "../../constants/systemPrompt.js";
-import { callOpenAIAPI } from "../../llmService/OpenAI.js";
 import { callGeminiAPI } from "../../llmService/Gemini.js";
 import { isValidTodo } from "../../utils/isValidTodo.js";
 
@@ -21,20 +20,15 @@ router.post('/transcribeAndCategorize', async (req, res) => {
             }
         } as any;
 
-        // Get transcription from Gemini
-        const transcription = await callGeminiAPI(
-            "gemini-2.5-flash",
-            TRANSCRIBE_AUDIO_PROMPT,
+        let categorization = await callGeminiAPI(
+            "gemini-2.0-flash",
+            TRANSCRIBE_AUDIO_PROMPT + "\n\n" + CATEGORISE_TODO_PROMPT,
             [inlineAudioPart],
             { responseMimeType: "text/plain" }
         );
 
-        // Get categorization from OpenAI
-        let categorization = await callOpenAIAPI(
-            "gpt-5-nano",
-            `${CATEGORISE_TODO_PROMPT}\n\nTranscription:\n${transcription ?? ''}`
-        );
-        
+        categorization = categorization?.replace("```json", "").replace("```", "").trim() || "";
+       
         try {
             categorization = JSON.parse(categorization || "");   
         } catch (error) {
@@ -76,7 +70,6 @@ router.post('/transcribeAndCategorize', async (req, res) => {
 
         res.status(200).json({
             isError: false,
-            transcription, 
             categorization: JSON.stringify(categorization), 
         });
         

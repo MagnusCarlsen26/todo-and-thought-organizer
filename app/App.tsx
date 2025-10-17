@@ -36,10 +36,10 @@ export default function App() {
         <StatusBar style="light" backgroundColor="#0b0f16" />
         <Tab.Navigator 
           screenOptions={screenOptions}
-          initialRouteName="Todos"
+          initialRouteName="Add"
         >
         <Tab.Screen
-          name="Add"
+          name="Todos"
           component={ViewTodos}
           options={{
             tabBarIcon: ({ color, size }) => <TodosIcon color={color} size={size} />
