@@ -1,18 +1,20 @@
 import { View, Text, ScrollView } from 'react-native';
 import { dateCategorizeTodos } from '../utils/viewTodos/dateCategorizeTodos';
 import TodoItem from '../components/viewTodos/TodoItem';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import CategorizationModal from '../components/addScreen/CategorizationModal';
 import { ValidTodo } from '../constants/todo.type';
 import { DARK_COLORS } from '../constants/categoryPalette';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { getSavedTodos, storeTodosIOService } from '../service/todoIOService';
+import { getSavedTodos, storeTodosIOService, TodoDBSchema } from '../service/todoIOService';
+import * as Notifications from 'expo-notifications';
+import { setTodoNotificationId } from '../utils/addScreen/setTodoNotificationId';
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
 
 export default function ViewTodos() {
 
-  const [todos, setTodos] = useState<ValidTodo[]>([]);
+  const [todos, setTodos] = useState<TodoDBSchema[]>([]);
   
 
   useFocusEffect(
@@ -56,8 +58,17 @@ export default function ViewTodos() {
     let nextTodos = [...todos];
     if (originalIndex !== -1) {
       // If multiple edited items come in, replace the one corresponding to the opened item
-      const editedForThis = editedTodos[0] ?? selectedTodo;
-      nextTodos[originalIndex] = editedForThis as ValidTodo;
+      const editedForThis = editedTodos[0] ?? selectedTodo as ValidTodo;
+
+      // Cancel previous notification if present
+      const prevId = nextTodos[originalIndex]?.notificationId;
+      if (prevId) {
+        try { await Notifications.cancelScheduledNotificationAsync(prevId); } catch {}
+      }
+
+      // Re-schedule and persist notification id
+      const updatedWithNotif = await setTodoNotificationId(editedForThis as ValidTodo);
+      nextTodos[originalIndex] = updatedWithNotif;
     }
     await storeTodosIOService(nextTodos);
     setTodos(nextTodos);

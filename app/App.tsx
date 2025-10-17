@@ -6,6 +6,18 @@ import ViewTodos from './src/tabs/ViewTodos';
 import AddScreen from './src/tabs/AddScreen';
 import ViewNotes from './src/tabs/ViewNotes';
 import requestNotificationPermission from './src/utils/permissions/notificationPermission';
+import * as Notifications from 'expo-notifications';
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    // Use new fields per expo-notifications 0.32+:
+    shouldShowBanner: true,
+    shouldShowList: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
+
 import { AddIcon, TodosIcon, NotesIcon } from './src/assets/svgs/navSvgs';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';

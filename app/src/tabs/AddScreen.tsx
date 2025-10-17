@@ -87,19 +87,9 @@ export default function AddScreen() {
 
         const existingTodos = await getSavedTodos();
 
-        const headingToIndex: Record<string, number> = {};
-        existingTodos.forEach((t, idx) => {
-            headingToIndex[t.todo.heading] = idx;
-        });
-
         const nextTodos = [...existingTodos];
         for (const edited of editedTodos) {
-            const matchIndex = headingToIndex[edited.todo.heading];
-            if (typeof matchIndex === 'number') {
-                nextTodos[matchIndex] = await setTodoNotificationId(edited);
-            } else {
-                nextTodos.push(await setTodoNotificationId(edited));
-            }
+            nextTodos.push(await setTodoNotificationId(edited));
         }
 
         await storeTodosIOService(nextTodos);

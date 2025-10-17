@@ -9,6 +9,7 @@
             - edit modal should close when tapped outside
 
     - Features
+        - after x hours feature (urgent)
         - Customize categories
         - User constants like - office going timings
         - adjust date according to timezone
@@ -22,6 +23,9 @@
         - optimize the appp - make it faster.
         - Get push notification token and store it in the database.
         - have seperate app names for dev and stage (urgent)
+        - import/export data
+        - buttons in notification to remind me later
+        - easily delete multiple todos in view todo page.
     - Server
         - maintain a db for usage.
         - GPT can handle both voice to text and categorization
