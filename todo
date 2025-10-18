@@ -10,7 +10,7 @@
 
     - Features
         - after x hours feature (urgent)
-        - Customize categories
+        - Customize categories (urgent)
         - User constants like - office going timings
         - adjust date according to timezone
         - add todo/note from image
@@ -20,9 +20,8 @@
         - adding urgency tag
         - today's todo view
         - mark as complete and delete options in view todos screen
-        - optimize the appp - make it faster.
+        - optimize the appp - make it faster. (urgent)
         - Get push notification token and store it in the database.
-        - have seperate app names for dev and stage (urgent)
         - import/export data
         - buttons in notification to remind me later
         - easily delete multiple todos in view todo page.
