@@ -1,35 +1,14 @@
 - Compromises
-    - UI
-        - add screen
-            - Fake audio wave in /add screen.
-            - set time is showing 17:47 PM (urgent)
-            - typography everywhere
-            - in categorization modal, when user clicks on save all todos are saved and when clicks on delete, all todos are deleted.
-        - view todos screen
-            - edit modal should close when tapped outside
 
     - Features
         - after x hours feature (urgent)
-        - Customize categories (urgent)
         - User constants like - office going timings
-        - adjust date according to timezone
-        - add todo/note from image
-        - swipe gesture to navigate through todos
         - show how many saved and deleted (urgent)
         - sorting searching filtering todos in view todos screen
-        - adding urgency tag
         - today's todo view
-        - mark as complete and delete options in view todos screen
-        - optimize the appp - make it faster. (urgent)
-        - Get push notification token and store it in the database.
-        - import/export data
         - buttons in notification to remind me later
-        - easily delete multiple todos in view todo page.
+        - integration with google calendar
+        - alarms
+        - setting page
     - Server
         - maintain a db for usage.
-        - GPT can handle both voice to text and categorization
-    - 
-        - change stage ci/cd and main ci/cd to .apk
-
-- FEAT
-    FEAT: READY FOR PERSONAL USE. FOR ME ONLY

@@ -17,7 +17,6 @@ export async function uploadAudio({ mimeType, base64 }: UploadAudioParams): Prom
             body: JSON.stringify({ audio: { base64, mimeType } })
         });
         console.log('[uploadAudio] Fetch completed. Status:', resp.status);
-
         const data = await resp.json();
 
         return JSON.parse(data.categorization) as ValidTodo[];

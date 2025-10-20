@@ -66,6 +66,11 @@ export default function CategorizationModal({
 
   const reminderText = getReminderText(editedCategorization[currentIndex].reminder);
 
+  const urgencyColor = editedCategorization[currentIndex].urgency?.level === "High" ? "text-red-500" :
+  editedCategorization[currentIndex].urgency?.level === "Medium" ? "text-yellow-500" :
+  editedCategorization[currentIndex].urgency?.level === "Low" ? "text-green-500" :
+  "text-white";
+
   return (
     <Modal
       animationType="slide"
@@ -106,7 +111,7 @@ export default function CategorizationModal({
                   </View>
 
                   <TextInput
-                    className="flex-1 text-white text-center text-3xl font-semibold p-2 border-b border-gray-300 mb-2"
+                    className={`flex-1 text-center text-3xl font-semibold p-2 border-b border-gray-300 mb-2 ${urgencyColor}`}
                     value={editedCategorization[currentIndex].todo.heading}
                     onChangeText={text => dispatch({ type: "heading", payload: text })}
                     placeholder="No heading"

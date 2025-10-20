@@ -18,6 +18,13 @@ interface TodoItemProps {
 export default function TodoItem({ item, onEdit }: TodoItemProps) {
   const theme = getCategoryTheme(item.category.category);
 
+  const urgencyColor = item.urgency?.level === "High" ? "text-red-500" :
+  item.urgency?.level === "Medium" ? "text-yellow-500" :
+  item.urgency?.level === "Low" ? "text-green-500" :
+  "text-white";
+
+  console.log('[TodoItem] Urgency Color:', urgencyColor);
+
   return (
     <View
       className='rounded-lg p-3 mb-3'
@@ -29,7 +36,7 @@ export default function TodoItem({ item, onEdit }: TodoItemProps) {
     >
       <TouchableOpacity onPress={() => onEdit(item)}>
         <View>
-          <Text className='text-xl font-bold mb-2' style={{ color: DARK_COLORS.title }}>
+          <Text className={`text-xl font-bold mb-2 ${urgencyColor}`}>
             {item.todo.heading}
           </Text>
           <Text className='text-gray-500'>

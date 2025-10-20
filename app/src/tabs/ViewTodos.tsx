@@ -89,7 +89,7 @@ export default function ViewTodos() {
               <View className="flex-row flex-wrap">
                 {dateCategorizedTodos[category]
                   .map( todo => 
-                    <View key={todo.todo.heading} className="w-1/2 p-1">
+                    <View key={todo.todo.heading} className="flex w-1/2 p-1">
                       <TodoItem 
                         item={todo} 
                         onEdit={() => handleEditTodo(todo)} 

@@ -1,1 +1,1 @@
-export const SERVER_URL = process.env.EXPO_PUBLIC_SERVER_URL;
+export const SERVER_URL = process.env.EXPO_PUBLIC_SERVER_URL || "http://10.120.33.35:3000";
