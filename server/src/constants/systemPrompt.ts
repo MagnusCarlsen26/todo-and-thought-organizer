@@ -13,7 +13,7 @@ If the user has mentioned the urgency of the todo, set the urgency in the respon
 If the user has not mentioned the urgency of the todo keep it as null.
 
 Your response should be strictly a JSON in following format ( Don't write any comments )- 
-Today's date - ${new Date().toLocaleDateString()}
+Today's date - ${new Date().toLocaleDateString()} { MM/DD/YYYY }
 If the text does not contain any todos just return 'false'.
 Even if there is only one todo, you should return an array with one todo.
 This shoud be your exact output.

@@ -33,7 +33,7 @@ export default function AddScreen() {
     const [categorizationResult, setCategorizationResult] = useState<ValidTodo[] | null>([]);
     
     const firstRender = useRef(true);
-    const { start, pause, resume, cancel, stopAndGetBase64, elapsedSeconds } = useAudioRecorder();
+    const { elapsedSeconds, ...audioUtils } = useAudioRecorder();
 
     useEffect(() => {
         if (firstRender.current) {
@@ -62,17 +62,13 @@ export default function AddScreen() {
         };
     }, [currState]);
 
-    const handleStateChange = (newState: ScreenStates) => {
-        handleStateChangeLogic({
+    const handleStateChange = async(newState: ScreenStates) => {
+        await handleStateChangeLogic({
             newState,
             currState,
             setCurrState,
             progressAnim,
-            start,
-            pause,
-            resume,
-            cancel,
-            stopAndGetBase64,
+            ...audioUtils,
             setShowCategorizationModal,
             setCategorizationResult,
         });
@@ -108,9 +104,9 @@ export default function AddScreen() {
             >
 
                 <Pressable
-                    onPress={() => {
+                    onPress={async() => {
                         if (stateConfig[currState].onClickTransition) {
-                            handleStateChange(stateConfig[currState].onClickTransition);
+                            await handleStateChange(stateConfig[currState].onClickTransition);
                         }
                     }}
                     className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 border-4 border-gray-200 aspect-square justify-center items-center rounded-full transition-all duration-300"
