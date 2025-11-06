@@ -9,6 +9,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { LeftButtons, RightButtons } from '../editTodo/buttons/ArrowButtons';
 import { goToNext, goToPrevious } from '../editTodo/utils/navTodos';
 import { handleSave, handleDelete } from '../editTodo/utils/handleConfirmation';
+import { URGENCY_COLOR } from '../../constants/colors/categoryPalette';
 
 import CalendarSvg from '../../assets/svgs/calenderSvg';
 import ClockSvg from '../../assets/svgs/clockSvg';
@@ -106,7 +107,7 @@ export default function CategorizationModal({
                   </View>
 
                   <TextInput
-                    className="flex-1 text-white text-center text-3xl font-semibold p-2 border-b border-gray-300 mb-2"
+                    className={`flex-1 text-center text-3xl font-semibold p-2 border-b border-gray-300 mb-2 ${URGENCY_COLOR[editedCategorization[currentIndex].urgency.level ?? 'Low']}`}
                     value={editedCategorization[currentIndex].todo.heading}
                     onChangeText={text => dispatch({ type: "heading", payload: text })}
                     placeholder="No heading"

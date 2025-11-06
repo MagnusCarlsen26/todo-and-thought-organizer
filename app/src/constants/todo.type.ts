@@ -12,4 +12,7 @@ export type ValidTodo = {
         time: { hour: number | null; minute: number | null } | null;
         snooze: { snoozeHours: number | null } | null;
     };
+    urgency: {
+        level: "High" | "Medium" | "Low" | null;
+    };
 };
