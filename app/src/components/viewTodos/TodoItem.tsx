@@ -5,7 +5,7 @@ import { getReminderText } from '../../utils/addScreen/getReminder';
 import CalendarIcon from '../../assets/svgs/calenderSvg';
 import ClockIcon from '../../assets/svgs/clockSvg';
 import SnoozeIcon from '../../assets/svgs/snoozeSvg';
-import { getCategoryTheme, DARK_COLORS } from '../../constants/categoryPalette';
+import { getCategoryTheme, DARK_COLORS, URGENCY_COLOR } from '../../constants/colors/categoryPalette';
 // import ShoppingImage from '../../assets/images/shopping.jpg';
 // import CareerImage from '../../assets/images/career.jpg';
 interface TodoItemProps {
@@ -29,7 +29,7 @@ export default function TodoItem({ item, onEdit }: TodoItemProps) {
     >
       <TouchableOpacity onPress={() => onEdit(item)}>
         <View>
-          <Text className='text-xl font-bold mb-2' style={{ color: DARK_COLORS.title }}>
+          <Text className={`text-xl font-bold mb-2 ${URGENCY_COLOR[item.urgency.level ?? 'Low']}`}>
             {item.todo.heading}
           </Text>
           <Text className='text-gray-500'>

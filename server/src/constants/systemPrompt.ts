@@ -9,6 +9,9 @@ export const CATEGORISE_TODO_PROMPT: string = `
 You are given a text by a user that contains one or more todos. 
 Your task is to categorise these todos and set reminders if user has mentioned.
 
+If the user has mentioned the urgency of the todo, set the urgency in the response.
+If the user has not mentioned the urgency of the todo keep it as null.
+
 Your response should be strictly a JSON in following format ( Don't write any comments )- 
 Today's date - ${new Date().toLocaleDateString()}
 If the text does not contain any todos just return 'false'.
@@ -25,6 +28,9 @@ This shoud be your exact output.
         "category" : {
             "category" : string,
             "subcategory" : string
+        },
+        "urgency" : {
+            "level" : string, // High | Medium | Low
         },
         // If reminder is not mentioned, set null for date and/or time and/or snooze
         "reminder" : {
@@ -52,6 +58,9 @@ This shoud be your exact output.
         "category" : {
             "category" : string,
             "subcategory" : string
+        },
+        "urgency" : {
+            "level" : string, // High | Medium | Low
         },
         "reminder" : {
             "date" : {

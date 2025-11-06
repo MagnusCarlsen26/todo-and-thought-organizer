@@ -32,6 +32,9 @@ export function isValidTodo(todo: any): {
                 snoozeHours: z.number().nullable(),
             }).nullable(),
         }),
+        urgency: z.object({
+            level: z.enum(["High", "Medium", "Low"]).nullable(),
+        }).nullable(),
     });
 
     const isValid = isValidTodoSchema.safeParse(todo);

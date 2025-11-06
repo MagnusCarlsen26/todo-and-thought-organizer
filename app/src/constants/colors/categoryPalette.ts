@@ -1,14 +1,9 @@
 export type CategoryTheme = {
-  accent: string; // main accent for border/tint
-  tagBackground: string; // low-opacity background for tag
-  tagText: string; // lighter tint for tag text
+  accent: string;
+  tagBackground: string;
+  tagText: string;
 };
 
-// Categories sourced from server/src/constants/todoCategories.json
-// We assign hue families per design:
-// - Shopping -> Amber
-// - Things to make decision -> Blue (calm/focused)
-// - Chores -> Emerald (fresh/routine)
 const CATEGORY_THEMES: Record<string, CategoryTheme> = {
   Shopping: {
     accent: '#F59E0B',
@@ -28,9 +23,9 @@ const CATEGORY_THEMES: Record<string, CategoryTheme> = {
 };
 
 const DEFAULT_THEME: CategoryTheme = {
-  accent: '#64748B', // slate-500
+  accent: '#64748B',
   tagBackground: 'rgba(100,116,139,0.15)',
-  tagText: '#CBD5E1', // slate-300
+  tagText: '#CBD5E1',
 };
 
 export function getCategoryTheme(categoryName: string | undefined | null): CategoryTheme {
@@ -48,4 +43,9 @@ export const DARK_COLORS = {
   metaBorder: '#334155',
 };
 
-
+export const URGENCY_COLOR: Record<string, string> = {
+  High: "text-red-500",
+  Medium: "text-yellow-500",
+  Low: "text-green-500",
+  Default: "text-white",
+};
